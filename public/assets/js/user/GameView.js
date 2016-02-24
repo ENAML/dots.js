@@ -51,8 +51,7 @@ class GameView {
   }
 
   mouseMove(e) {
-    if (!this.mousePressed || this.board.loopCompleted ||
-      !this.board.activeEls.length) return;
+    if (!this.mousePressed || !this.board.activeEls.length) return;
 
     this.currentMousePos = e;
 
@@ -60,9 +59,12 @@ class GameView {
     if (!hoverEl) return;
 
 
-    if (this.mouseInEl(this.currentMousePos, hoverEl)) {
+    if (this.mouseInEl(this.currentMousePos, hoverEl) &&
+      !this.board.loopCompleted) {
+
       this.handleMouseInEl(hoverEl);
     } else {
+      console.log('handling mouse out');
       this.handleMouseOutEl(hoverEl);
     }
 
@@ -127,6 +129,7 @@ class GameView {
       neighbors.indexOf(hoverEl) !== -1 &&
       this.board.activeEls.length >= 4) {
 
+      this.board.activeEls.push(hoverEl);
       this.board.loopCompleted = true;
     }
   }
@@ -208,9 +211,10 @@ class GameView {
       this.currentMousePos.clientY, rectBetweenRecents)) {
 
       this.board.activeEls.pop();
+      if (this.board.loopCompleted) this.board.loopCompleted = false;
     }
 
-    // window.rectBetweenRecents = rectBetweenRecents;
+    window.rectBetweenRecents = rectBetweenRecents;
   }
 
 
