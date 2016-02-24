@@ -64,6 +64,18 @@ class Board {
    * Turn / Update Methods
    */
   turn() {
+    this.startTurn();
+
+    this.removeActiveElsFromGrid();
+
+    this.shiftElsDown();
+
+    this.createNewEls();
+
+    this.finishTurn();
+  }
+
+  startTurn() {
     if (this.activeEls.length < 2) {
       this.finishTurn();
       return;
@@ -85,7 +97,9 @@ class Board {
         }
       }
     }
+  }
 
+  removeActiveElsFromGrid () {
     // remove activeEls from grid
     for (let i = 0; i < this.elements.length; i++) {
       let element = this.elements[i];
@@ -94,7 +108,9 @@ class Board {
         this.setElement(element.gridPos, null);
       }
     }
+  }
 
+  shiftElsDown() {
     // sort activeEls so that lowest y's are first in arr
     // (not doing this results in errors while shifting stuff down)
     this.activeEls.sort((a, b) => {
@@ -120,7 +136,6 @@ class Board {
     }
 
     // if element exists in position, correct it's gridPos.
-    // if element doesn't exist in pos, create a new one.
     for (let i = 0; i < this.height; i++) {
       for (let j = 0; j < this.width; j++) {
         let gridPos = new Vector(j, i);
@@ -128,21 +143,32 @@ class Board {
         let element = this.getElement(gridPos);
         if (element) {
           element.gridPos = gridPos;
-        } else {
+        }
+      }
+    }
+  }
+
+  createNewEls() {
+    for (let i = 0; i < this.height; i++) {
+      for (let j = 0; j < this.width; j++) {
+        let gridPos = new Vector(j, i);
+
+        let element = this.getElement(gridPos);
+        if (!element) {
           let newDot = new Dot(gridPos);
           this.setElement(gridPos, newDot);
         }
       }
     }
-
-    this.finishTurn();
   }
 
   finishTurn() {
     this.isChanging = false;
     this.activeEls = [];
+    this.cloned = null;
     this.loopCompleted = false;
   }
+
 
   /**
    * Creates copy of grid, maintaining it's state
