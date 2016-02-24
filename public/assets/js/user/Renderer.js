@@ -9,7 +9,7 @@ class Renderer {
     this.context.clearRect(0, 0, layoutManager.width, layoutManager.height);
 
     if (window.debug && window.rectBetweenRecents) {
-      this.context.fillStyle = "#ddd";
+      this.context.fillStyle = "#ccc";
       this.context.fillRect(rectBetweenRecents.x, rectBetweenRecents.y,
         rectBetweenRecents.width, rectBetweenRecents.height);
 
@@ -19,6 +19,7 @@ class Renderer {
 
       this.context.beginPath();
       this.context.lineWidth = board.maxElSize / 4;
+      this.context.strokeStyle = "#333";
 
       if (board.activeEls.length > 1) {
         for (var i = 1; i < board.activeEls.length; i++) {
@@ -48,11 +49,11 @@ class Renderer {
 
     for (var i = 0; i < board.elements.length; i++) {
       var element = board.elements[i];
-      if (element) this.drawElement(board, element);
+      if (element) this.drawElement(board, element, i);
     }
   }
 
-  drawElement(board, element) {
+  drawElement(board, element, i) {
 
     this.context.fillStyle = element.dotType.color;
 

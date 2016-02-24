@@ -12,8 +12,6 @@ class GameView {
 
     this.context = this.el.getContext("2d");
 
-    this.animating = true; // this shouldn't always be on but for now it's fine
-
     this.mousePressed = false;
     this.currentMousePos = null;
   }
@@ -40,6 +38,8 @@ class GameView {
    * Touch Events
    */
   mouseDown(e) {
+    if (this.board.isChanging) return;
+
     let hoverEl = this.getHoverEl(e);
     if (!hoverEl) return;
     if (!this.mouseInEl(e, hoverEl)) return;
@@ -51,7 +51,8 @@ class GameView {
   }
 
   mouseMove(e) {
-    if (!this.mousePressed || !this.board.activeEls.length) return;
+    if (!this.mousePressed ||!this.board.activeEls.length ||
+      this.board.isChanging) return;
 
     this.currentMousePos = e;
 
@@ -71,6 +72,8 @@ class GameView {
   }
 
   mouseUp(e) {
+    if (this.board.isChanging) return;
+    
     this.board.turn();
     this.mousePressed = false;
   }
@@ -220,8 +223,6 @@ class GameView {
    */
   update() {
     requestAnimationFrame(this.update);
-
-    if (!this.mouseDown && !this.animating) return;
 
     this.renderer.render(this.board, this.currentMousePos);
   }

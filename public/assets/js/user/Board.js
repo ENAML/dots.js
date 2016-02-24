@@ -12,8 +12,8 @@ const NEIGHBORS = [
 class Board {
   constructor (options) {
     if (!options) options = {};
-    this.width = options.width || 10;
-    this.height = options.height || 10;
+    this.width = options.width || 7;
+    this.height = options.height || 7;
 
     // calculate element dimensions
     this.elWidth = layoutManager.width / this.width;
@@ -31,6 +31,9 @@ class Board {
         this.setElement(new Vector(j, i), newDot);
       }
     }
+
+    this.isChanging = false;
+    this.cloned = null;
 
     this.activeEls = [];
     this.loopCompleted = false;
@@ -65,6 +68,9 @@ class Board {
       this.finishTurn();
       return;
     }
+    this.isChanging = true;
+
+    this.cloned = this.cloneGrid();
 
     // if loop is complete, change activeEls to be array including
     // every single element of activeEls type / id / color
@@ -133,8 +139,30 @@ class Board {
   }
 
   finishTurn() {
+    this.isChanging = false;
     this.activeEls = [];
     this.loopCompleted = false;
+  }
+
+  /**
+   * Creates copy of grid, maintaining it's state
+   * before updating, for animating / transitions
+   */
+  cloneGrid() {
+    let cloned = [];
+    for (let i = 0; i < this.height; i++) {
+      for (let j = 0; j < this.width; j++) {
+        let newDot = new Dot({
+          x: j,
+          y: i
+        });
+
+        newDot.dotType = this.getElement(new Vector(j, i)).dotType;
+        cloned.push(newDot);
+      }
+    }
+
+    return cloned;
   }
 }
 
