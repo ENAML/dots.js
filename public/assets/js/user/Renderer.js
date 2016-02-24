@@ -9,12 +9,12 @@ class Renderer {
     this.context.clearRect(0, 0, layoutManager.width, layoutManager.height);
 
     if (window.debug && window.rectBetweenRecents) {
-      this.context.fillStyle = "#0000ff";
+      this.context.fillStyle = "#ddd";
       this.context.fillRect(rectBetweenRecents.x, rectBetweenRecents.y,
         rectBetweenRecents.width, rectBetweenRecents.height);
     }
 
-    if (board.activeEls.length) {
+    if (board.activeEls.length > 0) {
 
       this.context.beginPath();
       this.context.lineWidth = board.maxElSize / 4;
@@ -47,19 +47,27 @@ class Renderer {
 
     for (var i = 0; i < board.elements.length; i++) {
       var element = board.elements[i];
-      this.drawElement(board, element);
+      if (element) this.drawElement(board, element);
     }
   }
 
   drawElement(board, element) {
-    if (board.loopCompleted && board.activeEls.indexOf(element) !== -1) {
-      // DO SOMETHING
-    }
 
     this.context.fillStyle = element.dotType.color;
 
     let x = element.gridPos.x * board.elWidth + board.elWidth / 2;
     let y = element.gridPos.y * board.elHeight + board.elHeight / 2;
+
+    if (board.loopCompleted &&
+      board.activeEls[0].dotType.id === element.dotType.id) {
+
+      this.context.globalAlpha = 0.5;
+      this.context.beginPath();
+      this.context.arc(x, y, board.maxElSize / 1.5, 0, Math.PI * 2, false);
+      this.context.fill();
+      this.context.globalAlpha = 1;
+    }
+
     this.context.beginPath();
     this.context.arc(x, y, board.maxElSize / 2, 0, Math.PI * 2, false);
     this.context.fill();

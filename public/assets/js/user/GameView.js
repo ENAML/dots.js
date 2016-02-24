@@ -12,6 +12,8 @@ class GameView {
 
     this.context = this.el.getContext("2d");
 
+    this.animating = true; // this shouldn't always be on but for now it's fine
+
     this.mousePressed = false;
     this.currentMousePos = null;
   }
@@ -21,8 +23,6 @@ class GameView {
     this.renderer = new Renderer({
       context: this.context,
     });
-
-    this.renderer.render(this.board);
 
     this.bindEvents();
 
@@ -64,7 +64,6 @@ class GameView {
 
       this.handleMouseInEl(hoverEl);
     } else {
-      console.log('handling mouse out');
       this.handleMouseOutEl(hoverEl);
     }
 
@@ -72,10 +71,8 @@ class GameView {
   }
 
   mouseUp(e) {
-    this.board.activeEls = [];
-    this.board.loopCompleted = false;
+    this.board.turn();
     this.mousePressed = false;
-    this.renderer.render(this.board, e);
   }
 
 
@@ -174,11 +171,11 @@ class GameView {
     {
       let shiftX;
       if (rectBetweenRecents.width > 0) {
-        rectBetweenRecents.width -= this.board.maxElSize / 2;
-        shiftX = (this.board.maxElSize / 4);
+        rectBetweenRecents.width -= this.board.maxElSize;
+        shiftX = (this.board.maxElSize / 2);
       } else {
-        rectBetweenRecents.width += this.board.maxElSize / 2;
-        shiftX = -(this.board.maxElSize / 4);
+        rectBetweenRecents.width += this.board.maxElSize;
+        shiftX = -(this.board.maxElSize / 2);
       }
 
       rectBetweenRecents.height = this.board.maxElSize / 1.5;
@@ -192,11 +189,11 @@ class GameView {
     {
       let shiftY;
       if (rectBetweenRecents.height > 0) {
-        rectBetweenRecents.height -= this.board.maxElSize / 2;
-        shiftY = (this.board.maxElSize / 4);
+        rectBetweenRecents.height -= this.board.maxElSize;
+        shiftY = (this.board.maxElSize / 2);
       } else {
-        rectBetweenRecents.height += this.board.maxElSize / 2;
-        shiftY = -(this.board.maxElSize / 4);
+        rectBetweenRecents.height += this.board.maxElSize;
+        shiftY = -(this.board.maxElSize / 2);
       }
 
       rectBetweenRecents.width = this.board.maxElSize / 1.5;

@@ -36,6 +36,9 @@ class Board {
     this.loopCompleted = false;
   }
 
+  /**
+   * Element Vector methods
+   */
   getElement(vector) {
     return this.elements[(vector.y * this.width) + vector.x];
   }
@@ -51,6 +54,43 @@ class Board {
     }
 
     return neighbors;
+  }
+
+
+  /**
+   * Turn / Update Methods
+   */
+  turn() {
+    if (this.activeEls.length < 2) {
+      this.finishTurn();
+      return;
+    }
+
+    // remove activeEls from grid
+    for (var i = 0; i < this.elements.length; i++) {
+      let element = this.elements[i];
+
+      if (this.activeEls.indexOf(element) !== -1) {
+        this.setElement(element.gridPos, null);
+      }
+    }
+
+    // shift everything down
+    for (var i = 0; i < this.activeEls.length; i++) {
+      let element = this.activeEls[i];
+
+      for (var y = element.gridPos.y; y < 0; y--) {
+        let elAbove = this.getElement(new Vector(element.gridPos.x, y - 1));
+        console.log(elAbove);
+      }
+    }
+
+    this.finishTurn();
+  }
+
+  finishTurn() {
+    this.activeEls = [];
+    this.loopCompleted = false;
   }
 }
 
