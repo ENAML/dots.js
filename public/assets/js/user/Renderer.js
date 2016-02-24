@@ -12,6 +12,7 @@ class Renderer {
       this.context.fillStyle = "#ddd";
       this.context.fillRect(rectBetweenRecents.x, rectBetweenRecents.y,
         rectBetweenRecents.width, rectBetweenRecents.height);
+
     }
 
     if (board.activeEls.length > 0) {
