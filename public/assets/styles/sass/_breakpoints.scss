@@ -1,0 +1,7 @@
+@import "libs/include_media";
+
+$breakpoints: (
+	small: $breakpoints-small, 
+	medium-small: $breakpoints-medium-small, 
+	medium: $breakpoints-medium, 
+);

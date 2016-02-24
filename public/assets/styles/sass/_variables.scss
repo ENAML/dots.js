@@ -1,0 +1,43 @@
+//font variables;
+// $font-tg-condensed: 'TradeGothicLTStd-Cn18', sans-serif;
+// $font-tg-bold-condensed: 'TradeGothicLTStd-BdCn20', sans-serif;
+// $font-brown-regular: 'Brown-Regular', sans-serif;
+// $font-tnr: 'Times New Roman', serif;
+$font-inconsolata: 'Inconsolata', sans-serif;
+
+// Typography
+$base-font-family: $font-inconsolata;
+$base-font-size: 16px;
+$em-base: 10px;
+$base-line-height: 1.5;
+$heading-line-height: 1.2;
+$base-spacing: $base-line-height * 1em;
+$small-spacing: $base-spacing / 2;
+$font-weight-normal: 400;
+$font-weight-bold: 700;
+
+
+// CUSTOM PROJECT VARS
+$content-max-width: 1280px;
+$content-percentage-width: 65%;
+$sub-content-percentage-width: 70%;
+$header-logo-height: 70px;
+$header-nav-height: 60px;
+$header-social-height: 60px;
+$search-text-area-height: 63px;
+$footer-height: 60px;
+$filters-header-height: 80px;
+$archives-header-height: 45px;
+$filters-body-height: 300px;
+$post-info-height: 200px;
+$carousel-button-height: 70px;
+
+//Mobile
+$mobile-font-size: 7px;
+$mobile-header-height: 50px;
+$mobile-filters-header-height: 60px;
+
+// COLORS
+$light-gray: #f4f4f4;
+$mid-gray: #919191;
+$dark-gray: #444;

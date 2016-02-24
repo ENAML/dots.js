@@ -1,0 +1,7 @@
+{
+	"breakpoints": {
+		"medium": "1200px",
+		"medium-small": "1000px",
+		"small": "750px"
+	}
+}

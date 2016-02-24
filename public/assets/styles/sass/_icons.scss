@@ -1,0 +1,55 @@
+@font-face {
+  font-family: "myfont";
+  src: url('../fonts/myfont.eot');
+  src: url('../fonts/myfont.eot?#iefix') format('eot'),
+    url('../fonts/myfont.woff') format('woff'),
+    url('../fonts/myfont.ttf') format('truetype'),
+    url('../fonts/myfont.svg#myfont') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.s:before {
+  display: inline-block;
+  font-family: "myfont";
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.s-lg {
+  font-size: 1.3333333333333333em;
+  line-height: 0.75em;
+  vertical-align: -15%;
+}
+.s-2x { font-size: 2em; }
+.s-3x { font-size: 3em; }
+.s-4x { font-size: 4em; }
+.s-5x { font-size: 5em; }
+.s-fw {
+  width: 1.2857142857142858em;
+  text-align: center;
+}
+
+.s-MAC_CarouselArrow:before { content: "\E001" }
+.s-MAC_DetailPageArrow:before { content: "\E002" }
+.s-MAC_Facebook:before { content: "\E003" }
+.s-MAC_FollowPlusSign:before { content: "\E004" }
+.s-MAC_MenuDownArrow:before { content: "\E005" }
+.s-MAC_Pinterest:before { content: "\E006" }
+.s-MAC_Reblog:before { content: "\E007" }
+.s-MAC_SearchIcon:before { content: "\E008" }
+.s-MAC_SocialShare:before { content: "\E009" }
+.s-MAC_Twitter:before { content: "\E00A" }
+.s-MAC_Slideshow:before { content: "\E00B" }
+.s-MAC_Logo:before { content: "\E00C" }
+.s-MAC_HeartLike:before { content: "\E00D" }
+.s-MAC_Notes:before { content: "\E00E" }
+.s-MAC_SearchBarX:before { content: "\E00F" }
+.s-MAC_Youtube:before { content: "\E010" }
+.s-MAC_Instagram:before { content: "\E011" }
+.s-Play:before { content: "\E012" }
+.s-X:before { content: "\E013" }
+.s-MAC_MobileX:before { content: "\E014" }

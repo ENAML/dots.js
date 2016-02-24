@@ -1,0 +1,83 @@
+// do we need compass?
+// @import "global";
+
+@import "bourbon/bourbon";
+@import "reset";
+@import "variables";
+@import "mixins";
+
+@import "libs/codemirror";
+@import "libs/lint";
+@import "libs/theme";
+
+@import "icons";
+
+@import "tabs";
+@import "panel";
+@import "preloader";
+@import "editor";
+@import "docs";
+@import "customMarkdown";
+@import "submission";
+
+/* apply a natural box layout model to all elements, but allowing components to change */
+html {
+    box-sizing: border-box;
+    font-family: sofia-pro, sans-serif;
+}
+
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+
+html, body {
+    margin: 0;
+    position: relative;
+    height: 100%;
+    overflow: hidden;
+    font-size: 10px;
+}
+
+#home-overlay {
+    z-index: 2;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(#000, 0.5);
+
+    visibility: hidden;
+    opacity: 0;
+
+    .side-panel {
+        position: absolute;
+        height: 100%;
+        left: $optionsWidth;
+        width: calc( 100% - #{$optionsWidth} );
+        @extend %verticalAlign;
+        .inner {
+            width: 850px;
+            letter-spacing: 0.1em;
+            font-weight: 300;
+            line-height: 2em;
+            color: white;
+            text-align: center;
+            font-size: 1.6em;
+
+            .line{
+                visibility: hidden;
+            }
+        }
+    }
+}
+
+// #base-function {
+//     display: none;
+// }
+
+iframe {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    overflow: hidden;
+    z-index: 1;
+}

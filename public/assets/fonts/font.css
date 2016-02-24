@@ -1,0 +1,24 @@
+@font-face {
+  font-family: 'Inconsolata';
+  src: url('Inconsolata-Bold.eot'); /* IE9 Compat Modes */
+  src: url('Inconsolata-Bold.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('Inconsolata-Bold.woff') format('woff'), /* Modern Browsers */
+       url('Inconsolata-Bold.ttf')  format('truetype'), /* Safari, Android, iOS */
+       url('Inconsolata-Bold.svg#1e809497c56d5ee053aedc961ac7170b') format('svg'); /* Legacy iOS */
+       
+  font-style:   normal;
+  font-weight:  700;
+}
+
+@font-face {
+  font-family: 'Inconsolata';
+  src: url('Inconsolata-Regular.eot'); /* IE9 Compat Modes */
+  src: url('Inconsolata-Regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('Inconsolata-Regular.woff') format('woff'), /* Modern Browsers */
+       url('Inconsolata-Regular.ttf')  format('truetype'), /* Safari, Android, iOS */
+       url('Inconsolata-Regular.svg#13437d772f407632d8beb98399776c52') format('svg'); /* Legacy iOS */
+       
+  font-style:   normal;
+  font-weight:  400;
+}
+

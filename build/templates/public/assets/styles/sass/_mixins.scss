@@ -1,0 +1,66 @@
+%verticalAlign {
+    @include display(flex);
+
+    @include align-items(center);
+
+    @include justify-content(center);
+}
+
+%verticalAlignText {
+    @include display(flex);
+
+    @include justify-content(center);
+
+    @include flex-direction(column);
+
+    text-align: center;
+}
+
+%resetButton {
+    border-radius: 0;
+    border: none;
+    outline: none;
+    margin: 0;
+    padding: 0;
+    background-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-appearance: none;
+    -webkit-font-smoothing: antialiased;
+
+    // font-family: $base-font-family;
+    font-family: sofia-pro, sans-serif;
+
+    @extend %no-user-select;
+
+    cursor: pointer;
+}
+
+%no-user-select {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
+%baseCopy {
+    font-family: sofia-pro, sans-serif;
+    letter-spacing: 0.4em;
+    font-weight: 300;
+}
+
+@mixin buttonHover($bgColor: rgba(#000, 0.5), $bgColorHover: lighten(rgba(#000, 0.5), 30%)) {
+    cursor: pointer;
+    background-color: $bgColor;
+
+    @include transition(background-color 0.5s ease-out);
+
+    &:not(.disabled) {
+        &:hover {
+            background-color: $bgColorHover;
+        }
+    }
+}

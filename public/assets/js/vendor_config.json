@@ -1,0 +1,28 @@
+{
+  "desktop": [
+    /**
+     * Bower:
+     */
+    "lib/bower/jquery.js",
+    "lib/bower/jquery.mousewheel.js",
+    "lib/bower/pixi.js",
+    "lib/bower/underscore.js",
+    "lib/bower/backbone.js",
+    // "lib/bower/backbone.babysitter.js",
+    // "lib/bower/backbone.wreqr.js",
+    // "lib/bower/backbone.radio.js",
+    // "lib/bower/backbone.marionette.js",
+    // "lib/bower/slick.min.js",
+    // "lib/bower/moment.js",
+    "lib/bower/fastclick.js",
+
+    /**
+     * Greensock:
+     */
+    "lib/gsap/TweenLite.js",
+    // "lib/gsap/TimelineLite.js",
+    "lib/gsap/EasePack.js",
+    "lib/gsap/jquery.gsap.js",
+    "lib/gsap/CSSPlugin.js"
+  ]
+}

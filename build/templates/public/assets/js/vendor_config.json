@@ -1,0 +1,9 @@
+{
+	"desktop": [
+		"lib/codemirror.js",
+		"lib/mode.javascript.js",
+		"lib/jshint.js",
+		"lib/lint.js",
+		"lib/javascript-lint.js"
+	]
+}
