@@ -26,6 +26,7 @@ class GameView {
 
     this.update = this.update.bind(this);
     this.update();
+
   }
 
   bindEvents() {
@@ -38,7 +39,7 @@ class GameView {
    * Touch Events
    */
   mouseDown(e) {
-    if (this.board.isChanging) return;
+    if (this.board.hasChanged) return;
 
     let hoverEl = this.getHoverEl(e);
     if (!hoverEl) return;
@@ -52,7 +53,7 @@ class GameView {
 
   mouseMove(e) {
     if (!this.mousePressed ||!this.board.activeEls.length ||
-      this.board.isChanging) return;
+      this.board.hasChanged) return;
 
     this.currentMousePos = e;
 
@@ -72,8 +73,8 @@ class GameView {
   }
 
   mouseUp(e) {
-    if (this.board.isChanging) return;
-    
+    if (this.board.hasChanged) return;
+
     this.board.turn();
     this.mousePressed = false;
   }
@@ -214,7 +215,7 @@ class GameView {
       if (this.board.loopCompleted) this.board.loopCompleted = false;
     }
 
-    window.rectBetweenRecents = rectBetweenRecents;
+    // window.rectBetweenRecents = rectBetweenRecents;
   }
 
 
@@ -223,7 +224,6 @@ class GameView {
    */
   update() {
     requestAnimationFrame(this.update);
-
     this.renderer.render(this.board, this.currentMousePos);
   }
 }

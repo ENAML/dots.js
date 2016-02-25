@@ -26,17 +26,36 @@ class Board {
       for (let j = 0; j < this.width; j++) {
         let newDot = new Dot({
           x: j,
-          y: i
+          y: i,
         });
         this.setElement(new Vector(j, i), newDot);
       }
     }
 
-    this.isChanging = false;
+    this.hasChanged = false; // DO NOT SET THIS VALUE DIRECTLY
+
     this.cloned = null;
 
     this.activeEls = [];
     this.loopCompleted = false;
+  }
+
+
+  /**
+   * used to set hasChanged var
+   *
+   * - hasChanged should only be set to "true"
+   * at the end of the "turn" function
+   * - hasChanged should only be set to "false"
+   * by the renderer once all relevant turn animations are done
+   */
+  setChanged(bool) {
+    this.hasChanged = bool;
+
+    if (!bool) {
+      this.activeEls = [];
+      this.loopCompleted = false;
+    }
   }
 
   /**
@@ -68,6 +87,8 @@ class Board {
 
     this.removeActiveElsFromGrid();
 
+    this.addPreviousPositions();
+
     this.shiftElsDown();
 
     this.createNewEls();
@@ -80,9 +101,6 @@ class Board {
       this.finishTurn();
       return;
     }
-    this.isChanging = true;
-
-    this.cloned = this.cloneGrid();
 
     // if loop is complete, change activeEls to be array including
     // every single element of activeEls type / id / color
@@ -107,6 +125,20 @@ class Board {
       if (this.activeEls.indexOf(element) !== -1) {
         this.setElement(element.gridPos, null);
       }
+    }
+  }
+
+
+  /**
+   * adds property to each grid element with a reference
+   * to its previous position for use when animating
+   */
+  addPreviousPositions() {
+    for (let i = 0; i < this.elements.length; i++) {
+      let element = this.elements[i];
+      if (!element) continue;
+
+      element.previousGridPos = new Vector(element.gridPos.x, element.gridPos.y);
     }
   }
 
@@ -163,33 +195,10 @@ class Board {
   }
 
   finishTurn() {
-    this.isChanging = false;
-    this.activeEls = [];
-    this.cloned = null;
-    this.loopCompleted = false;
+    this.setChanged(true);
   }
 
 
-  /**
-   * Creates copy of grid, maintaining it's state
-   * before updating, for animating / transitions
-   */
-  cloneGrid() {
-    let cloned = [];
-    for (let i = 0; i < this.height; i++) {
-      for (let j = 0; j < this.width; j++) {
-        let newDot = new Dot({
-          x: j,
-          y: i
-        });
-
-        newDot.dotType = this.getElement(new Vector(j, i)).dotType;
-        cloned.push(newDot);
-      }
-    }
-
-    return cloned;
-  }
 }
 
 module.exports = Board;
