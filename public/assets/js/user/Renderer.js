@@ -57,10 +57,14 @@ class Renderer {
 
       if (element.radius > 0) {
         element.radius -= 1;
+
         if (element.loopedAlpha && element.loopedAlpha > 0) {
-          element.loopedRadius -= 1;
-          element.loopedAlpha -= 0.025;
+          element.loopedAlpha -= 0.05;
         }
+        if (element.loopedRadius && element.loopedRadius > 0) {
+          element.loopedRadius -= 1;
+        }
+
         shrinkCompleted = false;
       }
     }
@@ -128,7 +132,7 @@ class Renderer {
 
     if (element.loopedRadius && element.loopedAlpha) {
 
-      this.context.globalAlpha = element.loopedAlpha;
+      this.context.globalAlpha = Math.max(element.loopedAlpha, 0);
       this.context.beginPath();
       this.context.arc(x, y, element.loopedRadius, 0, Math.PI * 2, false);
       this.context.fill();

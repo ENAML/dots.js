@@ -83,6 +83,11 @@ class Board {
    * Turn / Update Methods
    */
   turn() {
+    if (this.activeEls.length < 2) {
+      this.setChanged(false);
+      return;
+    }
+
     this.startTurn();
 
     this.removeActiveElsFromGrid();
@@ -97,10 +102,6 @@ class Board {
   }
 
   startTurn() {
-    if (this.activeEls.length < 2) {
-      this.finishTurn();
-      return;
-    }
 
     // if loop is complete, change activeEls to be array including
     // every single element of activeEls type / id / color
