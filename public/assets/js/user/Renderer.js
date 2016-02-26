@@ -158,10 +158,20 @@ class Renderer {
     for (let i = 0; i < this.shiftingEls.length; i++) {
       let element = this.shiftingEls[i];
 
+      if (element.prevY === element.currentY) continue;
+
+
+      // if (element.prevY < element.currentY) {
+      //   element.prevY += 0.1;
+      //   shiftCompleted = false;
+      // } else {
+      //   element.prevY = element.currentY;
+      // }
       if (element.prevY < element.currentY) {
-        element.prevY += 0.05;
+        element.prevY += (element.currentY - element.prevY) * 0.1;
         shiftCompleted = false;
-      } else {
+      }
+      if (element.prevY >= element.currentY - 0.01) {
         element.prevY = element.currentY;
       }
     }
@@ -176,7 +186,7 @@ class Renderer {
     let totalNewEls = this.newEls.length;
     for (let i = 0; i < totalNewEls; i++) {
       this.newEls[i].spawnFrameDelay = Math.floor(
-        Math.random() * totalNewEls * 5);
+        Math.random() * totalNewEls * 3);
     }
 
     return function() {
