@@ -4,6 +4,8 @@ class Renderer {
   constructor(options) {
     this.context = options.context;
 
+    this.staticStateEls = []; // this is used when turn animations aren't happening
+    this.prepareStaticData(options.board);
     this.resetRendererState();
   }
 
@@ -18,9 +20,42 @@ class Renderer {
   }
 
   /**
-   * Prepares arrays of data required for animations to complete
+   * Prepares array of data required to render board in static state
    */
-  prepareAnimationTurnData(board) {
+  prepareStaticData(board) {
+
+    if (this.staticStateEls.length === 0) // should only run when game starts
+    {
+      for (let i = 0; i < board.elements.length; i++) {
+        let element = board.elements[i];
+        this.staticStateEls.push({
+          currentX: element.gridPos.x,
+          currentY: element.gridPos.y,
+          dotType: element.dotType,
+          radius: board.maxElSize / 2,
+          loopedRadius: board.maxElSize / 1.5,
+          loopedAlpha: 0.5,
+        });
+      }
+    }
+    else // this should run whenever a turn is over and animations are done
+    {
+      this.staticStateEls = [];
+      for (let i = 0; i < this.shiftingEls.length; i++) {
+        this.staticStateEls.push(this.shiftingEls[i]);
+      }
+      for (let i = 0; i < this.newEls.length; i++) {
+        this.staticStateEls.push(this.newEls[i]);
+      }
+    }
+
+   }
+
+
+  /**
+   * Prepares arrays of data required for turn animations to complete
+   */
+  prepareTurnAnimationData(board) {
     this.isAnimatingTurn = true;
     for (let i = 0; i < board.activeEls.length; i++) {
       let element = board.activeEls[i];
@@ -29,8 +64,9 @@ class Renderer {
         currentY: element.gridPos.y,
         dotType: element.dotType,
         radius: board.maxElSize / 2,
-        loopedRadius: board.loopCompleted ? board.maxElSize / 1.5 : null,
-        loopedAlpha: board.loopCompleted ? 0.5 : null
+        loopedRadius: board.maxElSize / 1.5,
+        loopedAlpha: 0.5,
+        loopCompleted: board.loopCompleted
       });
     }
     for (let i = 0; i < board.elements.length; i++) {
@@ -43,6 +79,8 @@ class Renderer {
           prevY: element.previousGridPos.y,
           dotType: element.dotType,
           radius: board.maxElSize / 2,
+          loopedRadius: board.maxElSize / 1.5,
+          loopedAlpha: 0.5,
         });
       } else {
         this.newEls.push({
@@ -52,7 +90,9 @@ class Renderer {
           prevY: -100,
           dotType: element.dotType,
           radius: 0,
-          destRadius: board.maxElSize / 2
+          destRadius: board.maxElSize / 2,
+          loopedRadius: board.maxElSize / 1.5,
+          loopedAlpha: 0.5,
         });
       }
     }
@@ -93,10 +133,10 @@ class Renderer {
       if (element.radius > 0) {
         element.radius -= 1;
 
-        if (element.loopedAlpha && element.loopedAlpha > 0) {
+        if (element.loopCompleted && element.loopedAlpha > 0) {
           element.loopedAlpha -= 0.05;
         }
-        if (element.loopedRadius && element.loopedRadius > 0) {
+        if (element.loopCompleted && element.loopedRadius > 0) {
           element.loopedRadius -= 1;
         }
 
@@ -131,6 +171,7 @@ class Renderer {
     }
   }
 
+  // increase radius of new els until they reach normal size
   populateNew() {
     if (this.usePrevPosForShiftingEls) this.usePrevPosForShiftingEls = false;
     if (!this.canShowNew) this.canShowNew = true;
@@ -157,7 +198,7 @@ class Renderer {
    */
   render(board, currentMousePos) {
     if (board.hasChanged && !this.isAnimatingTurn) {
-      this.prepareAnimationTurnData(board);
+      this.prepareTurnAnimationData(board);
     }
 
     this.context.clearRect(0, 0, layoutManager.width, layoutManager.height);
@@ -175,6 +216,7 @@ class Renderer {
       this.drawTurnAnimationBoard(board);
 
       if (this.turnAnimationSteps.length === 0) {
+        this.prepareStaticData();
         this.resetRendererState();
         board.setChanged(false);
       }
@@ -184,9 +226,9 @@ class Renderer {
         this.drawActiveElConnections(board, currentMousePos);
       }
 
-      for (var i = 0; i < board.elements.length; i++) {
-        var element = board.elements[i];
-        if (element) this.drawElement(board, element);
+      for (var i = 0; i < this.staticStateEls.length; i++) {
+        var element = this.staticStateEls[i];
+        if (element) this.drawElement(board, element, false);
       }
     }
   }
@@ -196,24 +238,24 @@ class Renderer {
     if (this.activeEls.length > 0) {
       for (let i = 0; i < this.activeEls.length; i++) {
         let element = this.activeEls[i];
-        this.drawTurnAnimationElement(board, element, false);
+        this.drawElement(board, element, false);
       }
     }
 
     for (let i = 0; i < this.shiftingEls.length; i++) {
       let element = this.shiftingEls[i];
-      this.drawTurnAnimationElement(board, element, this.usePrevPosForShiftingEls);
+      this.drawElement(board, element, this.usePrevPosForShiftingEls);
     }
 
     if (this.canShowNew) {
       for (let i = 0; i < this.newEls.length; i++) {
         let element = this.newEls[i];
-        this.drawTurnAnimationElement(board, element, false);
+        this.drawElement(board, element, false);
       }
     }
   }
 
-  drawTurnAnimationElement(board, element, usePreviousPos) {
+  drawElement(board, element, usePreviousPos) {
 
     if (element.radius < 0) return;
 
@@ -225,7 +267,8 @@ class Renderer {
     let x = gridX * board.elWidth + board.elWidth / 2;
     let y = gridY * board.elHeight + board.elHeight / 2;
 
-    if (element.loopedRadius && element.loopedAlpha) {
+    if (element.loopCompleted || ((!this.isAnimatingTurn && board.loopCompleted &&
+      board.activeEls[0].dotType.id === element.dotType.id))) {
 
       this.context.globalAlpha = Math.max(element.loopedAlpha, 0);
       this.context.beginPath();
@@ -272,27 +315,27 @@ class Renderer {
     this.context.stroke();
   }
 
-  drawElement(board, element) {
-    this.context.fillStyle = element.dotType.color;
-
-    let x = element.gridPos.x * board.elWidth + board.elWidth / 2;
-    let y = element.gridPos.y * board.elHeight + board.elHeight / 2;
-
-    if (board.loopCompleted &&
-      board.activeEls[0].dotType.id === element.dotType.id) {
-
-      this.context.globalAlpha = 0.5;
-      this.context.beginPath();
-      this.context.arc(x, y, board.maxElSize / 1.5, 0, Math.PI * 2, false);
-      this.context.fill();
-      this.context.globalAlpha = 1;
-    }
-
-    this.context.beginPath();
-    this.context.arc(x, y, board.maxElSize / 2, 0, Math.PI * 2, false);
-    this.context.fill();
-
-  }
+  // drawElement(board, element) {
+  //   this.context.fillStyle = element.dotType.color;
+  //
+  //   let x = element.gridPos.x * board.elWidth + board.elWidth / 2;
+  //   let y = element.gridPos.y * board.elHeight + board.elHeight / 2;
+  //
+    // if (board.loopCompleted &&
+    //   board.activeEls[0].dotType.id === element.dotType.id) {
+    //
+    //   this.context.globalAlpha = 0.5;
+    //   this.context.beginPath();
+    //   this.context.arc(x, y, board.maxElSize / 1.5, 0, Math.PI * 2, false);
+    //   this.context.fill();
+    //   this.context.globalAlpha = 1;
+    // }
+  //
+  //   this.context.beginPath();
+  //   this.context.arc(x, y, board.maxElSize / 2, 0, Math.PI * 2, false);
+  //   this.context.fill();
+  //
+  // }
 
   drawBackBounds() {
     this.context.fillStyle = "#ccc";

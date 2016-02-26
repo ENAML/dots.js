@@ -20,6 +20,7 @@ class GameView {
     this.board = new Board();
     this.renderer = new Renderer({
       context: this.context,
+      board: this.board
     });
 
     this.bindEvents();

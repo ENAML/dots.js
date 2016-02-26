@@ -12,8 +12,8 @@ const NEIGHBORS = [
 class Board {
   constructor (options) {
     if (!options) options = {};
-    this.width = options.width || 10;
-    this.height = options.height || 10;
+    this.width = options.width || 7;
+    this.height = options.height || 7;
 
     // calculate element dimensions
     this.elWidth = layoutManager.width / this.width;
