@@ -98,10 +98,10 @@ class Renderer {
     }
 
     this.turnAnimationSteps.push(this.shrinkActive.bind(this));
-    this.turnAnimationSteps.push(this.waitForFrames(25).bind(this));
+    // this.turnAnimationSteps.push(this.waitForFrames(25).bind(this));
     this.turnAnimationSteps.push(this.shiftDown.bind(this));
-    this.turnAnimationSteps.push(this.waitForFrames(25).bind(this));
-    this.turnAnimationSteps.push(this.populateNew.bind(this));
+    // this.turnAnimationSteps.push(this.waitForFrames(25).bind(this));
+    this.turnAnimationSteps.push(this.populateNew().bind(this));
   }
 
 
@@ -137,7 +137,7 @@ class Renderer {
           element.loopedAlpha -= 0.05;
         }
         if (element.loopCompleted && element.loopedRadius > 0) {
-          element.loopedRadius -= 1;
+          element.loopedRadius -= 2.5;
         }
 
         shrinkCompleted = false;
@@ -173,21 +173,35 @@ class Renderer {
 
   // increase radius of new els until they reach normal size
   populateNew() {
-    if (this.usePrevPosForShiftingEls) this.usePrevPosForShiftingEls = false;
-    if (!this.canShowNew) this.canShowNew = true;
-
-    let populationComplete = true;
-    for (let i = 0; i < this.newEls.length; i++) {
-      let element = this.newEls[i];
-
-      if (element.radius < element.destRadius) {
-        element.radius += 1;
-        populationComplete = false;
-      }
+    let totalNewEls = this.newEls.length;
+    for (let i = 0; i < totalNewEls; i++) {
+      this.newEls[i].spawnFrameDelay = Math.floor(
+        Math.random() * totalNewEls * 5);
     }
 
-    if (populationComplete) {
-      this.turnAnimationSteps.shift();
+    return function() {
+      if (this.usePrevPosForShiftingEls) this.usePrevPosForShiftingEls = false;
+      if (!this.canShowNew) this.canShowNew = true;
+
+      let populationComplete = true;
+      for (let i = 0; i < this.newEls.length; i++) {
+        let element = this.newEls[i];
+
+        if (element.spawnFrameDelay > 0) {
+          element.spawnFrameDelay -= 1;
+          populationComplete = false;
+          continue;
+        }
+
+        if (element.radius < element.destRadius) {
+          element.radius += 1;
+          populationComplete = false;
+        }
+      }
+
+      if (populationComplete) {
+        this.turnAnimationSteps.shift();
+      }
     }
   }
 
@@ -272,7 +286,7 @@ class Renderer {
 
       this.context.globalAlpha = Math.max(element.loopedAlpha, 0);
       this.context.beginPath();
-      this.context.arc(x, y, element.loopedRadius, 0, Math.PI * 2, false);
+      this.context.arc(x, y, Math.max(element.loopedRadius, 0), 0, Math.PI * 2, false);
       this.context.fill();
       this.context.globalAlpha = 1;
     }
@@ -314,28 +328,6 @@ class Renderer {
     }
     this.context.stroke();
   }
-
-  // drawElement(board, element) {
-  //   this.context.fillStyle = element.dotType.color;
-  //
-  //   let x = element.gridPos.x * board.elWidth + board.elWidth / 2;
-  //   let y = element.gridPos.y * board.elHeight + board.elHeight / 2;
-  //
-    // if (board.loopCompleted &&
-    //   board.activeEls[0].dotType.id === element.dotType.id) {
-    //
-    //   this.context.globalAlpha = 0.5;
-    //   this.context.beginPath();
-    //   this.context.arc(x, y, board.maxElSize / 1.5, 0, Math.PI * 2, false);
-    //   this.context.fill();
-    //   this.context.globalAlpha = 1;
-    // }
-  //
-  //   this.context.beginPath();
-  //   this.context.arc(x, y, board.maxElSize / 2, 0, Math.PI * 2, false);
-  //   this.context.fill();
-  //
-  // }
 
   drawBackBounds() {
     this.context.fillStyle = "#ccc";
