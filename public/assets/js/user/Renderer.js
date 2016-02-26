@@ -4,13 +4,21 @@ class Renderer {
   constructor(options) {
     this.context = options.context;
 
+    this.resetRendererState();
+  }
+
+  resetRendererState() {
     this.isAnimatingTurn = false;
     this.activeEls = [];
     this.shiftingEls = [];
     this.newEls = [];
     this.turnAnimationSteps = [];
+    this.usePrevPosForShiftingEls = false;
   }
 
+  /**
+   * Prepares arrays of data required for animations to complete
+   */
   prepareAnimationTurnData(board) {
     this.isAnimatingTurn = true;
     for (let i = 0; i < board.activeEls.length; i++) {
@@ -48,10 +56,34 @@ class Renderer {
     }
 
     this.turnAnimationSteps.push(this.shrinkActive.bind(this));
+    this.turnAnimationSteps.push(this.waitForFrames(25).bind(this));
+    this.turnAnimationSteps.push(this.shiftDown.bind(this));
+    this.turnAnimationSteps.push(this.waitForFrames(25).bind(this));
   }
 
+
+  /**
+   * Animation Code
+   */
+
+  // returns a function that has access to the number of frames
+  // to wait (in a closure) and counts down to that. it shifts itself
+  // off of array once the value is 0 or less
+  waitForFrames(frames) {
+    return function() {
+      frames--;
+
+      if (frames < 0) {
+        this.turnAnimationSteps.shift();
+      }
+    }
+  }
+
+  // animation to shrink all activeEls
   shrinkActive() {
-    var shrinkCompleted = true;
+    if (!this.usePrevPosForShiftingEls) this.usePrevPosForShiftingEls = true;
+
+    let shrinkCompleted = true;
     for (let i = 0; i < this.activeEls.length; i++) {
       let element = this.activeEls[i];
 
@@ -75,7 +107,33 @@ class Renderer {
     }
   }
 
+  // shift down all elements that are to be shifted down
+  shiftDown() {
 
+    if (!this.usePrevPosForShiftingEls) this.usePrevPosForShiftingEls = true;
+
+    let shiftCompleted = true;
+    for (let i = 0; i < this.shiftingEls.length; i++) {
+      let element = this.shiftingEls[i];
+
+      if (element.prevY < element.currentY) {
+        element.prevY += 0.05;
+        shiftCompleted = false;
+      } else {
+        element.prevY = element.currentY;
+      }
+    }
+
+    if (shiftCompleted) {
+      this.turnAnimationSteps.shift();
+    }
+  }
+
+
+  /**
+   * Main Render function
+   * TODO: add comments and optimize
+   */
   render(board, currentMousePos) {
     if (board.hasChanged && !this.isAnimatingTurn) {
       this.prepareAnimationTurnData(board);
@@ -96,7 +154,7 @@ class Renderer {
       this.drawTurnAnimationBoard(board);
 
       if (this.turnAnimationSteps.length === 0) {
-        this.isAnimatingTurn = false;
+        this.resetRendererState();
         board.setChanged(false);
       }
 
@@ -113,22 +171,31 @@ class Renderer {
   }
 
   drawTurnAnimationBoard(board) {
+
     if (this.activeEls.length > 0) {
       for (let i = 0; i < this.activeEls.length; i++) {
         let element = this.activeEls[i];
-        this.drawTurnAnimationElement(board, element);
+        this.drawTurnAnimationElement(board, element, false);
       }
+    }
+
+    for (let i = 0; i < this.shiftingEls.length; i++) {
+      let element = this.shiftingEls[i];
+      this.drawTurnAnimationElement(board, element, this.usePrevPosForShiftingEls);
     }
   }
 
-  drawTurnAnimationElement(board, element) {
+  drawTurnAnimationElement(board, element, usePreviousPos) {
 
     if (element.radius < 0) return;
 
     this.context.fillStyle = element.dotType.color;
 
-    let x = element.currentX * board.elWidth + board.elWidth / 2;
-    let y = element.currentY * board.elHeight + board.elHeight / 2;
+    let gridX = usePreviousPos ? element.prevX : element.currentX;
+    let gridY = usePreviousPos ? element.prevY : element.currentY;
+
+    let x = gridX * board.elWidth + board.elWidth / 2;
+    let y = gridY * board.elHeight + board.elHeight / 2;
 
     if (element.loopedRadius && element.loopedAlpha) {
 
