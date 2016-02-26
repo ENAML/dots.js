@@ -14,6 +14,7 @@ class Renderer {
     this.newEls = [];
     this.turnAnimationSteps = [];
     this.usePrevPosForShiftingEls = false;
+    this.canShowNew = false;
   }
 
   /**
@@ -50,7 +51,8 @@ class Renderer {
           prevX: element.gridPos.x,
           prevY: -100,
           dotType: element.dotType,
-          radius: board.maxElSize / 2,
+          radius: 0,
+          destRadius: board.maxElSize / 2
         });
       }
     }
@@ -59,6 +61,7 @@ class Renderer {
     this.turnAnimationSteps.push(this.waitForFrames(25).bind(this));
     this.turnAnimationSteps.push(this.shiftDown.bind(this));
     this.turnAnimationSteps.push(this.waitForFrames(25).bind(this));
+    this.turnAnimationSteps.push(this.populateNew.bind(this));
   }
 
 
@@ -109,7 +112,6 @@ class Renderer {
 
   // shift down all elements that are to be shifted down
   shiftDown() {
-
     if (!this.usePrevPosForShiftingEls) this.usePrevPosForShiftingEls = true;
 
     let shiftCompleted = true;
@@ -125,6 +127,25 @@ class Renderer {
     }
 
     if (shiftCompleted) {
+      this.turnAnimationSteps.shift();
+    }
+  }
+
+  populateNew() {
+    if (this.usePrevPosForShiftingEls) this.usePrevPosForShiftingEls = false;
+    if (!this.canShowNew) this.canShowNew = true;
+
+    let populationComplete = true;
+    for (let i = 0; i < this.newEls.length; i++) {
+      let element = this.newEls[i];
+
+      if (element.radius < element.destRadius) {
+        element.radius += 1;
+        populationComplete = false;
+      }
+    }
+
+    if (populationComplete) {
       this.turnAnimationSteps.shift();
     }
   }
@@ -182,6 +203,13 @@ class Renderer {
     for (let i = 0; i < this.shiftingEls.length; i++) {
       let element = this.shiftingEls[i];
       this.drawTurnAnimationElement(board, element, this.usePrevPosForShiftingEls);
+    }
+
+    if (this.canShowNew) {
+      for (let i = 0; i < this.newEls.length; i++) {
+        let element = this.newEls[i];
+        this.drawTurnAnimationElement(board, element, false);
+      }
     }
   }
 
