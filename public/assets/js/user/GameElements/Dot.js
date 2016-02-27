@@ -17,16 +17,16 @@ const DOTTYPES = [
     name: 'green',
     color: '#89ed90'
   },
-  {
-    id: 4,
-    name: 'blue',
-    color: '#8abdff'
-  },
-  {
-    id: 5,
-    name: 'purple',
-    color: '#9d5ab7'
-  }
+  // {
+  //   id: 4,
+  //   name: 'blue',
+  //   color: '#8abdff'
+  // },
+  // {
+  //   id: 5,
+  //   name: 'purple',
+  //   color: '#9d5ab7'
+  // }
 ];
 
 class Dot {
