@@ -42,5 +42,8 @@
     "underscore": "^1.7.0",
     "vinyl-source-stream": "^1.0.0",
     "watchify": "^2.3.0"
+  },
+  "dependencies": {
+    "gulp": "^3.9.1"
   }
 }

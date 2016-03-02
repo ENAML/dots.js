@@ -7,7 +7,8 @@ const NEIGHBORS = [
   new Vector(1, 0), // EAST
   new Vector(0, 1), // SOUTH
   new Vector(-1, 0) // WEST
-]
+];
+
 
 class Board {
   constructor (options) {

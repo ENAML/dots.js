@@ -34,7 +34,8 @@ class Renderer {
           currentY: element.gridPos.y,
           dotType: element.dotType,
           radius: board.maxElSize / 2,
-          loopedRadius: board.maxElSize / 1.5,
+          loopedRadius: board.maxElSize / 2,
+          maxLoopedRadius: board.maxElSize / 1.5,
           loopedAlpha: 0.5,
         });
       }
@@ -61,6 +62,7 @@ class Renderer {
    */
   prepareTurnAnimationData(board) {
     this.isAnimatingTurn = true;
+
     for (let i = 0; i < board.activeEls.length; i++) {
       let element = board.activeEls[i];
       this.activeEls.push({
@@ -69,6 +71,7 @@ class Renderer {
         dotType: element.dotType,
         radius: board.maxElSize / 2,
         loopedRadius: board.maxElSize / 1.5,
+        maxLoopedRadius: board.maxElSize / 1.5,
         loopedAlpha: 0.5,
         loopCompleted: board.loopCompleted
       });
@@ -88,7 +91,8 @@ class Renderer {
           prevY: element.previousGridPos.y,
           dotType: element.dotType,
           radius: board.maxElSize / 2,
-          loopedRadius: board.maxElSize / 1.5,
+          loopedRadius: board.maxElSize / 2,
+          maxLoopedRadius: board.maxElSize / 1.5,
           loopedAlpha: 0.5,
         });
       }
@@ -103,7 +107,8 @@ class Renderer {
           dotType: element.dotType,
           radius: 0,
           destRadius: board.maxElSize / 2,
-          loopedRadius: board.maxElSize / 1.5,
+          loopedRadius: 0,
+          maxLoopedRadius: board.maxElSize / 1.5,
           loopedAlpha: 0.5,
         });
       }
@@ -115,7 +120,8 @@ class Renderer {
           currentY: element.gridPos.y,
           dotType: element.dotType,
           radius: board.maxElSize / 2,
-          loopedRadius: board.maxElSize / 1.5,
+          loopedRadius: board.maxElSize / 2,
+          maxLoopedRadius: board.maxElSize / 1.5,
           loopedAlpha: 0.5,
         });
       }
@@ -156,12 +162,10 @@ class Renderer {
 
       if (element.radius > 0) {
         element.radius -= 1;
+        element.loopedRadius -= 2.5;
 
         if (element.loopCompleted && element.loopedAlpha > 0) {
           element.loopedAlpha -= 0.05;
-        }
-        if (element.loopCompleted && element.loopedRadius > 0) {
-          element.loopedRadius -= 2.5;
         }
 
         shrinkCompleted = false;
@@ -181,7 +185,7 @@ class Renderer {
    */
   shiftDown() {
 
-    let baseShiftFrameDelay = 2;
+    let baseShiftFrameDelay = 7;
 
     // sort elements into 2D array of [x][y]
     let sortedShift2DArr = [];
@@ -259,6 +263,7 @@ class Renderer {
 
         if (element.radius < element.destRadius) {
           element.radius += 2;
+          element.loopedRadius += 2;
           populationComplete = false;
         }
       }
@@ -306,7 +311,23 @@ class Renderer {
 
       for (var i = 0; i < this.staticStateEls.length; i++) {
         var element = this.staticStateEls[i];
-        if (element) this.drawElement(board, element, false);
+
+        if (element) {
+
+          // increases / decreases size of loopedRadius
+          if (board.loopCompleted &&
+            board.activeEls[0].dotType === element.dotType &&
+            element.loopedRadius < element.maxLoopedRadius) {
+
+            element.loopedRadius += 0.5;
+          } else if (!board.loopCompleted &&
+            element.loopedRadius > element.radius) {
+
+            element.loopedRadius -= 0.5;
+          }
+
+          this.drawElement(board, element, false);
+        }
       }
     }
   }
@@ -349,8 +370,7 @@ class Renderer {
     let x = gridX * board.elWidth + board.elWidth / 2;
     let y = gridY * board.elHeight + board.elHeight / 2;
 
-    if (element.loopCompleted || ((!this.isAnimatingTurn && board.loopCompleted &&
-      board.activeEls[0].dotType.id === element.dotType.id))) {
+    if (element.loopedRadius > element.radius) {
 
       this.context.globalAlpha = Math.max(element.loopedAlpha, 0);
       this.context.beginPath();
