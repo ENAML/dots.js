@@ -27,8 +27,8 @@ class Renderer {
 
     if (this.staticStateEls.length === 0) // should only run when game starts
     {
-      for (let i = 0; i < board.elements.length; i++) {
-        let element = board.elements[i];
+      for (let i = 0; i < board.grid.elements.length; i++) {
+        let element = board.grid.elements[i];
         this.staticStateEls.push({
           currentX: element.gridPos.x,
           currentY: element.gridPos.y,
@@ -76,8 +76,8 @@ class Renderer {
         loopCompleted: board.loopCompleted
       });
     }
-    for (let i = 0; i < board.elements.length; i++) {
-      let element = board.elements[i];
+    for (let i = 0; i < board.grid.elements.length; i++) {
+      let element = board.grid.elements[i];
 
       // elements that are changing position
       if (element.previousGridPos &&
@@ -185,7 +185,7 @@ class Renderer {
    */
   shiftDown() {
 
-    let baseShiftFrameDelay = 7;
+    let baseShiftFrameDelay = 3;
 
     // sort elements into 2D array of [x][y]
     let sortedShift2DArr = [];
@@ -224,11 +224,10 @@ class Renderer {
           continue;
         }
 
-        if (element.prevY < element.currentY) {
+        if (element.prevY < element.currentY - 0.01) {
           element.prevY += (element.currentY - element.prevY) * 0.1;
           shiftCompleted = false;
-        }
-        if (element.prevY >= element.currentY - 0.01) {
+        } else if (element.prevY >= element.currentY - 0.01) {
           element.prevY = element.currentY;
         }
       }
@@ -244,7 +243,7 @@ class Renderer {
     let totalNewEls = this.newEls.length;
     for (let i = 0; i < totalNewEls; i++) {
       this.newEls[i].spawnFrameDelay = Math.floor(
-        Math.random() * totalNewEls * 3);
+        Math.random() * totalNewEls);
     }
 
     return function() {

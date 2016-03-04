@@ -85,8 +85,8 @@ class GameView {
     let x = e.clientX;
     let y = e.clientY;
 
-    for (let i = 0; i < this.board.elements.length; i++) {
-      let element = this.board.elements[i];
+    for (let i = 0; i < this.board.grid.elements.length; i++) {
+      let element = this.board.grid.elements[i];
       let elRect = {
         x: element.gridPos.x * this.board.elWidth,
         y: element.gridPos.y * this.board.elHeight,
@@ -114,7 +114,7 @@ class GameView {
 
   handleMouseInEl(hoverEl) {
     let currentEl = this.board.activeEls[this.board.activeEls.length - 1];
-    let neighbors = this.board.getNeighbors(currentEl.gridPos);
+    let neighbors = this.board.grid.getNeighbors(currentEl.gridPos);
 
     // hoverEl is NOT in activeEls array but IS a neighbor of currentEl
     // and is of the same type as is the same type as currentEl

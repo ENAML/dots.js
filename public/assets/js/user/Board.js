@@ -1,35 +1,33 @@
 import layoutManager from "layoutManager";
 import Vector from "Vector";
+import Grid from "Grid";
 import Dot from "GameElements/Dot";
-
-const NEIGHBORS = [
-  new Vector(0, -1), // NORTH
-  new Vector(1, 0), // EAST
-  new Vector(0, 1), // SOUTH
-  new Vector(-1, 0) // WEST
-];
 
 
 class Board {
   constructor (options) {
     if (!options) options = {};
-    this.width = options.width || 16;
-    this.height = options.height || 8;
+    options.width = options.width || 16;
+    options.height = options.height || 8;
+
+    this.grid = new Grid({
+      width: options.width,
+      height: options.height
+    })
 
     // calculate element dimensions
-    this.elWidth = layoutManager.width / this.width;
-    this.elHeight = layoutManager.height / this.height;
+    this.elWidth = layoutManager.width / this.grid.width;
+    this.elHeight = layoutManager.height / this.grid.height;
     this.maxElSize = Math.min(this.elWidth, this.elHeight) / 2;
 
-    // populate elements array
-    this.elements = new Array(this.width * this.height);
-    for (let i = 0; i < this.height; i++) {
-      for (let j = 0; j < this.width; j++) {
+    // populate grid's elements array
+    for (let i = 0; i < this.grid.height; i++) {
+      for (let j = 0; j < this.grid.width; j++) {
         let newDot = new Dot({
           x: j,
           y: i,
         });
-        this.setElement(new Vector(j, i), newDot);
+        this.grid.setElement(new Vector(j, i), newDot);
       }
     }
 
@@ -57,26 +55,6 @@ class Board {
       this.activeEls = [];
       this.loopCompleted = false;
     }
-  }
-
-  /**
-   * Element Vector methods
-   */
-  getElement(vector) {
-    return this.elements[(vector.y * this.width) + vector.x];
-  }
-
-  setElement(vector, el) {
-    this.elements[(vector.y * this.width) + vector.x] = el;
-  }
-
-  getNeighbors(vector) {
-    let neighbors = [];
-    for (let i = 0; i < NEIGHBORS.length; i++) {
-      neighbors.push(this.getElement(vector.add(NEIGHBORS[i])));
-    }
-
-    return neighbors;
   }
 
 
@@ -108,8 +86,8 @@ class Board {
     // every single element of activeEls type / id / color
     if (this.loopCompleted) {
       let typeId = this.activeEls[0].dotType.id;
-      for (let i = 0; i < this.elements.length; i++) {
-        let element = this.elements[i];
+      for (let i = 0; i < this.grid.elements.length; i++) {
+        let element = this.grid.elements[i];
         if (element.dotType.id === typeId &&
           this.activeEls.indexOf(element) === -1) {
 
@@ -121,11 +99,11 @@ class Board {
 
   removeActiveElsFromGrid () {
     // remove activeEls from grid
-    for (let i = 0; i < this.elements.length; i++) {
-      let element = this.elements[i];
+    for (let i = 0; i < this.grid.elements.length; i++) {
+      let element = this.grid.elements[i];
 
       if (this.activeEls.indexOf(element) !== -1) {
-        this.setElement(element.gridPos, null);
+        this.grid.setElement(element.gridPos, null);
       }
     }
   }
@@ -136,8 +114,8 @@ class Board {
    * to its previous position for use when animating
    */
   addPreviousPositions() {
-    for (let i = 0; i < this.elements.length; i++) {
-      let element = this.elements[i];
+    for (let i = 0; i < this.grid.elements.length; i++) {
+      let element = this.grid.elements[i];
       if (!element) continue;
 
       element.previousGridPos = new Vector(element.gridPos.x, element.gridPos.y);
@@ -160,21 +138,21 @@ class Board {
       let x = posVect.x;
       while(y >= 0) {
 
-        let elAbove = this.getElement(new Vector(x, y));
+        let elAbove = this.grid.getElement(new Vector(x, y));
 
-        this.setElement(new Vector(x, y + 1), elAbove);
-        this.setElement(new Vector(x, y), null);
+        this.grid.setElement(new Vector(x, y + 1), elAbove);
+        this.grid.setElement(new Vector(x, y), null);
 
         y--;
       }
     }
 
     // if element exists in position, correct it's gridPos.
-    for (let i = 0; i < this.height; i++) {
-      for (let j = 0; j < this.width; j++) {
+    for (let i = 0; i < this.grid.height; i++) {
+      for (let j = 0; j < this.grid.width; j++) {
         let gridPos = new Vector(j, i);
 
-        let element = this.getElement(gridPos);
+        let element = this.grid.getElement(gridPos);
         if (element) {
           element.gridPos = gridPos;
         }
@@ -183,14 +161,14 @@ class Board {
   }
 
   createNewEls() {
-    for (let i = 0; i < this.height; i++) {
-      for (let j = 0; j < this.width; j++) {
+    for (let i = 0; i < this.grid.height; i++) {
+      for (let j = 0; j < this.grid.width; j++) {
         let gridPos = new Vector(j, i);
 
-        let element = this.getElement(gridPos);
+        let element = this.grid.getElement(gridPos);
         if (!element) {
           let newDot = new Dot(gridPos);
-          this.setElement(gridPos, newDot);
+          this.grid.setElement(gridPos, newDot);
         }
       }
     }
