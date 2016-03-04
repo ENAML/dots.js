@@ -128,7 +128,7 @@ class Renderer {
       }
     }
 
-    this.turnAnimationSteps.push(this.shrinkActive.bind(this));
+    this.turnAnimationSteps.push(this.shrinkActive().bind(this));
     // this.turnAnimationSteps.push(this.waitForFrames(25).bind(this));
     this.turnAnimationSteps.push(this.shiftDown().bind(this));
     // this.turnAnimationSteps.push(this.waitForFrames(25).bind(this));
@@ -155,27 +155,63 @@ class Renderer {
 
   // animation to shrink all activeEls
   shrinkActive() {
-    if (!this.usePrevPosForShiftingEls) this.usePrevPosForShiftingEls = true;
 
-    let shrinkCompleted = true;
-    for (let i = 0; i < this.activeEls.length; i++) {
-      let element = this.activeEls[i];
+    let tweenLength = 500; // in ms
 
-      if (element.radius > 0) {
-        element.radius -= 1;
-        element.loopedRadius -= 2.5;
+    // need to store shiftCompleted in object so that it
+    // can be modified by tween's onComplete function
+    // (just passing a boolean won't work because booleans
+    // don't keep memory references and thus it wouldn't
+    // be the same variable)
+    let state = {
+      shrinkCompleted: true
+    };
 
-        if (element.loopCompleted && element.loopedAlpha > 0) {
-          element.loopedAlpha -= 0.05;
+    return function() {
+      if (!this.usePrevPosForShiftingEls) this.usePrevPosForShiftingEls = true;
+
+      state.shrinkCompleted = true;
+
+      for (let i = 0; i < this.activeEls.length; i++) {
+        let element = this.activeEls[i];
+
+        if (!element.tween) {
+          
+          // need to set this when the loop hasn't been completed
+          // because the drawElement function will always draw the
+          // looped radius if it is larger than the radius
+          if (!element.loopCompleted) {
+            element.loopedRadius = element.radius;
+          }
+
+          element.tween = tweens.getNewTween(element, {
+            radius: 0,
+            loopedRadius: 0,
+            loopedAlpha: 0
+          }, tweenLength, tweens.easeInOutQuint,
+          (args) => {
+            args[0].shrinkCompleted = false;
+          });
         }
 
-        shrinkCompleted = false;
-      }
-    }
+        element.tween(state);
 
-    if (shrinkCompleted) {
-      this.activeEls = [];
-      this.turnAnimationSteps.shift();
+        // if (element.radius > 0) {
+        //   element.radius -= 1;
+        //   element.loopedRadius -= 2.5;
+
+        //   if (element.loopCompleted && element.loopedAlpha > 0) {
+        //     element.loopedAlpha -= 0.05;
+        //   }
+
+        //   state.shrinkCompleted = false;
+        // }
+      }
+
+      if (state.shrinkCompleted) {
+        this.activeEls = [];
+        this.turnAnimationSteps.shift();
+      }
     }
   }
 
@@ -212,13 +248,8 @@ class Renderer {
       }
     }
 
-    let tweenLength = 750; // in ms
+    let tweenLength = 500; // in ms
 
-    // need to store shiftCompleted in object so that it
-    // can be modified by tween's onComplete function
-    // (just passing a boolean won't work because booleans
-    // don't keep memory references and thus it wouldn't
-    // be the same variable)
     let state = {
       shiftCompleted: true
     };
@@ -250,14 +281,14 @@ class Renderer {
           }
 
           element.tween(state);
-
-
         }
       }
 
-      // console.log(state.shiftCompleted);
-
       if (state.shiftCompleted) {
+        for (let i = 0; i < this.shiftingEls.length; i++) {
+          this.shiftingEls[i].tween = null;
+        }
+
         this.turnAnimationSteps.shift();
       }
     }
@@ -271,28 +302,48 @@ class Renderer {
         Math.random() * totalNewEls);
     }
 
+    let tweenLength = 500; // in ms
+
+    let state = {
+      populationComplete: true
+    };
+
     return function() {
       if (this.usePrevPosForShiftingEls) this.usePrevPosForShiftingEls = false;
       if (!this.canShowNew) this.canShowNew = true;
 
-      let populationComplete = true;
+      state.populationComplete = true;
+
       for (let i = 0; i < this.newEls.length; i++) {
         let element = this.newEls[i];
 
         if (element.spawnFrameDelay > 0) {
           element.spawnFrameDelay -= 1;
-          populationComplete = false;
+          state.populationComplete = false;
           continue;
         }
 
-        if (element.radius < element.destRadius) {
-          element.radius += 2;
-          element.loopedRadius += 2;
-          populationComplete = false;
+        // stores new tween function to be called on every frame
+        if (!element.tween) {
+          console.log('first pass')
+          element.tween = tweens.getNewTween(element, {
+            radius: element.destRadius,
+            loopedRadius: element.destRadius
+          }, tweenLength, tweens.easeInOutQuad,
+          (args) => {
+            args[0].populationComplete = false;
+          });
         }
+
+        element.tween(state);
+
       }
 
-      if (populationComplete) {
+      if (state.populationComplete) {
+        for (let i = 0; i < this.newEls.length; i++) {
+          this.newEls[i].tween = null;
+        }
+
         this.turnAnimationSteps.shift();
       }
     }
