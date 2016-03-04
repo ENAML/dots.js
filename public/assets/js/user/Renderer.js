@@ -1,4 +1,5 @@
 import layoutManager from "layoutManager";
+import * as tweens from "utils/tweens";
 
 class Renderer {
   constructor(options) {
@@ -185,7 +186,7 @@ class Renderer {
    */
   shiftDown() {
 
-    let baseShiftFrameDelay = 3;
+    let baseShiftFrameDelay = 1;
 
     // sort elements into 2D array of [x][y]
     let sortedShift2DArr = [];
@@ -211,28 +212,52 @@ class Renderer {
       }
     }
 
+    let tweenLength = 750; // in ms
+
+    // need to store shiftCompleted in object so that it
+    // can be modified by tween's onComplete function
+    // (just passing a boolean won't work because booleans
+    // don't keep memory references and thus it wouldn't
+    // be the same variable)
+    let state = {
+      shiftCompleted: true
+    };
+
     return function() {
       if (!this.usePrevPosForShiftingEls) this.usePrevPosForShiftingEls = true;
 
-      let shiftCompleted = true;
-      for (let i = 0; i < this.shiftingEls.length; i++) {
-        let element = this.shiftingEls[i];
+      state.shiftCompleted = true;
 
-        if (element.shiftFrameDelay > 0) {
-          element.shiftFrameDelay -= 1;
-          shiftCompleted = false;
-          continue;
-        }
+      for (let i = 0; i < sortedShift2DArr.length; i++) {
+        for (let j = 0; j < sortedShift2DArr[i].length; j++) {
+          let element = sortedShift2DArr[i][j];
 
-        if (element.prevY < element.currentY - 0.01) {
-          element.prevY += (element.currentY - element.prevY) * 0.1;
-          shiftCompleted = false;
-        } else if (element.prevY >= element.currentY - 0.01) {
-          element.prevY = element.currentY;
+          // increment wait frames down until 0
+          if (element.shiftFrameDelay > 0) {
+            element.shiftFrameDelay -= 1;
+            state.shiftCompleted = false;
+            continue;
+          }
+
+          // stores new tween function to be called on every frame
+          if (!element.tween) {
+            element.tween = tweens.getNewTween(element, {
+              prevY: element.currentY
+            }, tweenLength, tweens.easeInOutCubic,
+            (args) => {
+              args[0].shiftCompleted = false;
+            });
+          }
+
+          element.tween(state);
+
+
         }
       }
 
-      if (shiftCompleted) {
+      // console.log(state.shiftCompleted);
+
+      if (state.shiftCompleted) {
         this.turnAnimationSteps.shift();
       }
     }
