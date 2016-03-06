@@ -186,7 +186,7 @@ class Renderer {
 
           element.tween = tweens.getNewTween(element, {
             radius: 0,
-            loopedRadius: 100,
+            loopedRadius: element.radius * 1.75,
             loopedAlpha: 0
           }, tweenLength, tweens.easeInOutQuint,
           (args) => {
@@ -196,16 +196,6 @@ class Renderer {
 
         element.tween(state);
 
-        // if (element.radius > 0) {
-        //   element.radius -= 1;
-        //   element.loopedRadius -= 2.5;
-
-        //   if (element.loopCompleted && element.loopedAlpha > 0) {
-        //     element.loopedAlpha -= 0.05;
-        //   }
-
-        //   state.shrinkCompleted = false;
-        // }
       }
 
       if (state.shrinkCompleted) {
