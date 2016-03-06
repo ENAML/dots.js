@@ -156,7 +156,7 @@ class Renderer {
   // animation to shrink all activeEls
   shrinkActive() {
 
-    let tweenLength = 500; // in ms
+    let tweenLength = 1000; // in ms
 
     // need to store shiftCompleted in object so that it
     // can be modified by tween's onComplete function
@@ -186,7 +186,7 @@ class Renderer {
 
           element.tween = tweens.getNewTween(element, {
             radius: 0,
-            loopedRadius: 0,
+            loopedRadius: 100,
             loopedAlpha: 0
           }, tweenLength, tweens.easeInOutQuint,
           (args) => {

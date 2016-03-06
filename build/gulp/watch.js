@@ -1,6 +1,16 @@
 var gulp = require( 'gulp' );
 var paths = require( "./paths" );
 var plugins = require( "./plugins" );
+var connect = require("gulp-connect");
+
+
+gulp.task('webserver', function() {
+  connect.server({
+    root: paths.rootPath,
+    port: 8000,
+    livereload: true
+  });
+});
 
 /* WATCH */
 gulp.task( 'watch', [ 'browserify_watch' ], function() {
@@ -24,11 +34,17 @@ gulp.task( 'watch', [ 'browserify_watch' ], function() {
 	} );
 	
 	// start server
-	plugins.nodemon({
-		script: paths.server.app,
-		watch: paths.server.base,
-		ext: 'js hbs html',
-		env: { 'NODE_ENV': 'development' },
-	});
+	// plugins.nodemon({
+	// 	script: paths.server.app,
+	// 	watch: paths.server.base,
+	// 	ext: 'js hbs html',
+	// 	env: { 'NODE_ENV': 'development' },
+	// });
+	
+  connect.server({
+    root: paths.rootPath,
+    port: 8000,
+    livereload: true
+  });
 
 } );
