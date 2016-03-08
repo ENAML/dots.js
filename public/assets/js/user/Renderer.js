@@ -371,6 +371,7 @@ class Renderer {
       }
 
     } else {
+
       if (board.activeEls.length > 0) {
         this.drawActiveElConnections(board, currentMousePos);
       }
@@ -440,9 +441,9 @@ class Renderer {
 
     if (element.loopedRadius > element.radius) {
 
-      this.context.globalAlpha = Math.max(element.loopedAlpha, 0);
+      this.context.globalAlpha = element.loopedAlpha;
       this.context.beginPath();
-      this.context.arc(x, y, Math.max(element.loopedRadius, 0), 0, Math.PI * 2, false);
+      this.context.arc(x, y, element.loopedRadius, 0, Math.PI * 2, false);
       this.context.fill();
       this.context.globalAlpha = 1;
     }
