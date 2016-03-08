@@ -14,6 +14,7 @@ class GameView {
 
     this.mousePressed = false;
     this.currentMousePos = null;
+
   }
 
   start() {
@@ -224,6 +225,7 @@ class GameView {
    * Main Update Loop
    */
   update() {
+
     requestAnimationFrame(this.update);
     this.renderer.render(this.board, this.currentMousePos);
   }

@@ -238,7 +238,7 @@ class Renderer {
       }
     }
 
-    let tweenLength = 500; // in ms
+    let tweenLength = 1000; // in ms
 
     let state = {
       shiftCompleted: true
@@ -249,9 +249,11 @@ class Renderer {
 
       state.shiftCompleted = true;
 
-      for (let i = 0; i < sortedShift2DArr.length; i++) {
-        for (let j = 0; j < sortedShift2DArr[i].length; j++) {
-          let element = sortedShift2DArr[i][j];
+      let i, j, element;
+
+      for (i = 0; i < sortedShift2DArr.length; i++) {
+        for (j = 0; j < sortedShift2DArr[i].length; j++) {
+          element = sortedShift2DArr[i][j];
 
           // increment wait frames down until 0
           if (element.shiftFrameDelay > 0) {
@@ -264,7 +266,7 @@ class Renderer {
           if (!element.tween) {
             element.tween = tweens.getNewTween(element, {
               prevY: element.currentY
-            }, tweenLength, tweens.easeInOutCubic,
+            }, tweenLength, tweens.easeInOutQuad,
             (args) => {
               args[0].shiftCompleted = false;
             });
@@ -275,7 +277,7 @@ class Renderer {
       }
 
       if (state.shiftCompleted) {
-        for (let i = 0; i < this.shiftingEls.length; i++) {
+        for (i = 0; i < this.shiftingEls.length; i++) {
           this.shiftingEls[i].tween = null;
         }
 
@@ -315,7 +317,6 @@ class Renderer {
 
         // stores new tween function to be called on every frame
         if (!element.tween) {
-          console.log('first pass')
           element.tween = tweens.getNewTween(element, {
             radius: element.destRadius,
             loopedRadius: element.destRadius
@@ -398,26 +399,28 @@ class Renderer {
   }
 
   drawTurnAnimationBoard(board) {
+    let i;
+    let element;
 
     if (this.activeEls.length > 0) {
-      for (let i = 0; i < this.activeEls.length; i++) {
-        let element = this.activeEls[i];
+      for (i = 0; i < this.activeEls.length; i++) {
+        element = this.activeEls[i];
         this.drawElement(board, element, false);
       }
     }
 
-    for (let i = 0; i < this.shiftingEls.length; i++) {
-      let element = this.shiftingEls[i];
+    for (i = 0; i < this.shiftingEls.length; i++) {
+      element = this.shiftingEls[i];
       this.drawElement(board, element, this.usePrevPosForShiftingEls);
     }
-    for (let i = 0; i < this.nonShiftingEls.length; i++) {
-      let element = this.nonShiftingEls[i];
+    for (i = 0; i < this.nonShiftingEls.length; i++) {
+      element = this.nonShiftingEls[i];
       this.drawElement(board, element, false);
     }
 
     if (this.canShowNew) {
-      for (let i = 0; i < this.newEls.length; i++) {
-        let element = this.newEls[i];
+      for (i = 0; i < this.newEls.length; i++) {
+        element = this.newEls[i];
         this.drawElement(board, element, false);
       }
     }
