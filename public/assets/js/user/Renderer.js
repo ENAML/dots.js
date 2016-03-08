@@ -267,7 +267,7 @@ class Renderer {
           if (!element.tween) {
             element.tween = tweens.getNewTween(element, {
               prevY: element.currentY
-            }, tweenLength, tweens.easeInOutQuad,
+            }, tweenLength, tweens.easeInOutQuint,
             (args) => {
               args[0].shiftCompleted = false;
             });
