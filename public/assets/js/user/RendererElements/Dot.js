@@ -19,10 +19,10 @@ class Dot extends PIXI.Container {
   }
 
   createChildren() {
-    let loop = new Circle(this.x, this.y, this.loopedRadius,
+    let loop = new Circle(0, 0, this.loopedRadius,
       this.dotType.color, this.loopedAlpha);
 
-    let main = new Circle(this.x, this.y, this.radius,
+    let main = new Circle(0, 0, this.radius,
       this.dotType.color, 1);
 
     this.addChild(loop);
@@ -36,6 +36,17 @@ class Dot extends PIXI.Container {
     if (this.position.x !== x || this.position.y !== y) {
       this.position.x = x;
       this.position.y = y;
+    }
+
+    // redraw looped circle
+    if (this.children[0].radius !== this.loopedRadius ||
+      this.children[0].alpha !== this.loopedAlpha) {
+      this.children[0].redraw(this.loopedRadius, this.loopedAlpha);
+    }
+
+    // redraw main circle
+    if (this.children[1].radius !== this.radius) {
+      this.children[1].redraw(this.radius, 1);
     }
   }
 
@@ -59,12 +70,25 @@ class Circle extends PIXI.Graphics {
   constructor(x, y, radius, color, alpha) {
     super();
 
-    this._radius = radius;
+    this.radius = radius;
+    this.color = color;
+    this.alpha = alpha;
 
     this.lineStyle(0);
-    this.beginFill(color, alpha);
+    this.beginFill(color, this.alpha);
     // this.drawCircle(x, y, radius);
-    this.drawEllipse(x, y, radius, radius);
+    this.drawEllipse(x, y, this.radius, this.radius);
+    this.endFill();
+  }
+
+  redraw(radius, alpha) {
+    this.radius = radius;
+    this.alpha = alpha;
+
+    this.clear();
+    this.lineStyle(0);
+    this.beginFill(this.color, this.alpha);
+    this.drawEllipse(0, 0, this.radius, this.radius);
     this.endFill();
   }
 }

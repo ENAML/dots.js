@@ -188,11 +188,11 @@ class Renderer {
       }
     }
 
-    // this.turnAnimationSteps.push(this.shrinkActive().bind(this));
-    // // this.turnAnimationSteps.push(this.waitForFrames(25).bind(this));
-    // this.turnAnimationSteps.push(this.shiftDown().bind(this));
-    // // this.turnAnimationSteps.push(this.waitForFrames(25).bind(this));
-    // this.turnAnimationSteps.push(this.populateNew().bind(this));
+    this.turnAnimationSteps.push(this.shrinkActive().bind(this));
+    // this.turnAnimationSteps.push(this.waitForFrames(25).bind(this));
+    this.turnAnimationSteps.push(this.shiftDown().bind(this));
+    // this.turnAnimationSteps.push(this.waitForFrames(25).bind(this));
+    this.turnAnimationSteps.push(this.populateNew().bind(this));
   }
 
 
@@ -232,8 +232,8 @@ class Renderer {
 
       state.shrinkCompleted = true;
 
-      for (let i = 0; i < this.activeEls.length; i++) {
-        let element = this.activeEls[i];
+      for (let i = 0; i < this.activeEls.children.length; i++) {
+        let element = this.activeEls.children[i];
 
         if (!element.tween) {
           
@@ -276,8 +276,8 @@ class Renderer {
     // sort elements into 2D array of [x][y]
     let sortedShift2DArr = [];
 
-    for (let i = 0; i < this.shiftingEls.length; i++) {
-      let element = this.shiftingEls[i];
+    for (let i = 0; i < this.shiftingEls.children.length; i++) {
+      let element = this.shiftingEls.children[i];
       let flooredX = Math.floor(element.currentX);
 
       if (!sortedShift2DArr[flooredX]) {
@@ -298,7 +298,7 @@ class Renderer {
       }
     }
 
-    let tweenLength = 1500; // in ms
+    let tweenLength = 3000; // in ms
 
     let state = {
       shiftCompleted: true
@@ -326,7 +326,7 @@ class Renderer {
           if (!element.tween) {
             element.tween = tweens.getNewTween(element, {
               prevY: element.currentY
-            }, tweenLength, tweens.easeInOutQuad,
+            }, tweenLength, tweens.easeInOutQuint,
             (args) => {
               args[0].shiftCompleted = false;
             });
@@ -348,9 +348,9 @@ class Renderer {
 
   // increase radius of new els until they reach normal size
   populateNew() {
-    let totalNewEls = this.newEls.length;
+    let totalNewEls = this.newEls.children.length;
     for (let i = 0; i < totalNewEls; i++) {
-      this.newEls[i].spawnFrameDelay = Math.floor(
+      this.newEls.children[i].spawnFrameDelay = Math.floor(
         Math.random() * totalNewEls);
     }
 
@@ -366,8 +366,8 @@ class Renderer {
 
       state.populationComplete = true;
 
-      for (let i = 0; i < this.newEls.length; i++) {
-        let element = this.newEls[i];
+      for (let i = 0; i < this.newEls.children.length; i++) {
+        let element = this.newEls.children[i];
 
         if (element.spawnFrameDelay > 0) {
           element.spawnFrameDelay -= 1;
@@ -410,17 +410,12 @@ class Renderer {
       this.prepareTurnAnimationData(board);
     }
 
-    // debug draws
-    if (window.debug && window.rectBetweenRecents) {
-      this.drawBackBounds();
-    }
-
     if (this.isAnimatingTurn) {
-      // if (this.turnAnimationSteps.length > 0) {
-      //   this.turnAnimationSteps[0](board, currentMousePos);
-      // }
+      if (this.turnAnimationSteps.length > 0) {
+        this.turnAnimationSteps[0](board, currentMousePos);
+      }
 
-      // this.drawTurnAnimationBoard(board);
+      this.drawTurnAnimationBoard(board);
 
       if (this.turnAnimationSteps.length === 0) {
         this.prepareStaticData();
@@ -460,26 +455,26 @@ class Renderer {
     let i;
     let element;
 
-    if (this.activeEls.length > 0) {
-      for (i = 0; i < this.activeEls.length; i++) {
-        element = this.activeEls[i];
-        this.drawElement(board, element, false);
+    if (this.activeEls.children.length > 0) {
+      for (i = 0; i < this.activeEls.children.length; i++) {
+        element = this.activeEls.children[i];
+        element.update(false);
       }
     }
 
-    for (i = 0; i < this.shiftingEls.length; i++) {
-      element = this.shiftingEls[i];
-      this.drawElement(board, element, this.usePrevPosForShiftingEls);
+    for (i = 0; i < this.shiftingEls.children.length; i++) {
+      element = this.shiftingEls.children[i];
+      element.update(this.usePrevPosForShiftingEls);
     }
-    for (i = 0; i < this.nonShiftingEls.length; i++) {
-      element = this.nonShiftingEls[i];
-      this.drawElement(board, element, false);
+    for (i = 0; i < this.nonShiftingEls.children.length; i++) {
+      element = this.nonShiftingEls.children[i];
+      element.update(false);
     }
 
     if (this.canShowNew) {
-      for (i = 0; i < this.newEls.length; i++) {
-        element = this.newEls[i];
-        this.drawElement(board, element, false);
+      for (i = 0; i < this.newEls.children.length; i++) {
+        element = this.newEls.children[i];
+        element.update(false);
       }
     }
   }
