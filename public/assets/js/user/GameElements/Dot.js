@@ -5,7 +5,7 @@ const DOTTYPES = [
   {
     id: 1,
     name: 'red',
-    color: '#f15c3b'
+    color: 0xf15c3b
   },
   // {
   //   id: 2,
@@ -20,12 +20,12 @@ const DOTTYPES = [
   {
     id: 4,
     name: 'blue',
-    color: '#8abdff'
+    color: 0x8abdff
   },
   {
     id: 5,
     name: 'purple',
-    color: '#9d5ab7'
+    color: 0x9d5ab7
   }
 ];
 

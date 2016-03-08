@@ -5,12 +5,10 @@ import Renderer from "Renderer";
 
 class GameView {
   constructor(options) {
-    this.el = document.createElement('canvas');
-    options.container.append(this.el);
-    this.el.width = layoutManager.width;
-    this.el.height = layoutManager.height;
+    this.el = PIXI.autoDetectRenderer(layoutManager.width,
+      layoutManager.height, {backgroundColor : 0xEEEEEE, antialias: true});
 
-    this.context = this.el.getContext("2d");
+    options.container.append(this.el.view);
 
     this.mousePressed = false;
     this.currentMousePos = null;
@@ -19,8 +17,8 @@ class GameView {
 
   start() {
     this.board = new Board();
-    this.renderer = new Renderer({
-      context: this.context,
+    this.renderController = new Renderer({
+      renderer: this.el,
       board: this.board
     });
 
@@ -227,7 +225,8 @@ class GameView {
   update() {
 
     requestAnimationFrame(this.update);
-    this.renderer.render(this.board, this.currentMousePos);
+    this.renderController.update(this.board, this.currentMousePos);
+    this.renderController.renderer.render(this.renderController.stage);
   }
 }
 

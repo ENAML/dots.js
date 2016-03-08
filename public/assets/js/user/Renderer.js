@@ -1,24 +1,57 @@
 import layoutManager from "layoutManager";
+import Dot from "RendererElements/Dot";
 import * as tweens from "utils/tweens";
 
 class Renderer {
   constructor(options) {
-    this.context = options.context;
+    this.renderer = options.renderer;
+    this.stage = new PIXI.Container();
 
-    this.staticStateEls = []; // this is used when turn animations aren't happening
+    this.activeElConnections = new PIXI.Graphics();
+    this.stage.addChild(this.activeElConnections);
+
+    this.staticStateEls = new PIXI.Container(); // this is used when turn animations aren't happening
+    this.stage.addChild(this.staticStateEls);
+
     this.prepareStaticData(options.board);
     this.resetRendererState();
   }
 
   resetRendererState() {
     this.isAnimatingTurn = false;
-    this.activeEls = [];
-    this.shiftingEls = [];
-    this.nonShiftingEls = [];
-    this.newEls = [];
+
+    if (this.stage.children.indexOf(this.activeEls) !== -1) {
+      this.stage.removeChild(this.activeEls);
+      this.activeEls.destroy(true);
+    }
+    this.activeEls = new PIXI.Container();
+    this.stage.addChild(this.activeEls);
+
+    if (this.stage.children.indexOf(this.shiftingEls) !== -1) {
+      this.stage.removeChild(this.shiftingEls);
+      this.shiftingEls.destroy(true);
+    }
+    this.shiftingEls = new PIXI.Container();
+    this.stage.addChild(this.shiftingEls);
+
+    if (this.stage.children.indexOf(this.nonShiftingEls) !== -1) {
+      this.stage.removeChild(this.nonShiftingEls);
+      this.nonShiftingEls.destroy(true);
+    }
+    this.nonShiftingEls = new PIXI.Container();
+    this.stage.addChild(this.nonShiftingEls);
+
+    if (this.stage.children.indexOf(this.newEls) !== -1) {
+      this.stage.removeChild(this.newEls);
+      this.newEls.destroy(true);
+    }
+    this.newEls = new PIXI.Container();
+    this.stage.addChild(this.newEls);
+
     this.turnAnimationSteps = [];
     this.usePrevPosForShiftingEls = false;
     this.canShowNew = false;
+
   }
 
   /**
@@ -26,11 +59,12 @@ class Renderer {
    */
   prepareStaticData(board) {
 
-    if (this.staticStateEls.length === 0) // should only run when game starts
+    if (board) // should only run when game starts
     {
       for (let i = 0; i < board.grid.elements.length; i++) {
         let element = board.grid.elements[i];
-        this.staticStateEls.push({
+
+        let dot = new Dot({
           currentX: element.gridPos.x * board.elWidth + board.elWidth / 2,
           currentY: element.gridPos.y * board.elHeight + board.elHeight / 2,
           dotType: element.dotType,
@@ -39,20 +73,35 @@ class Renderer {
           maxLoopedRadius: board.maxElSize / 1.5,
           loopedAlpha: 0.5,
         });
+        this.staticStateEls.addChild(dot);
       }
     }
     else // this should run whenever a turn is over and animations are done
     {
-      this.staticStateEls = [];
-      for (let i = 0; i < this.shiftingEls.length; i++) {
-        this.staticStateEls.push(this.shiftingEls[i]);
+
+      this.staticStateEls.removeChildren();
+
+      for (let i = this.shiftingEls.children.length - 1; i >= 0; i--) {
+        let element = this.shiftingEls.removeChildAt(i);
+        this.staticStateEls.addChild(element);
       }
-      for (let i = 0; i < this.nonShiftingEls.length; i++) {
-        this.staticStateEls.push(this.nonShiftingEls[i]);
+      for (let i = this.nonShiftingEls.children.length - 1; i >= 0; i--) {
+        let element = this.nonShiftingEls.removeChildAt(i);
+        this.staticStateEls.addChild(element);
       }
-      for (let i = 0; i < this.newEls.length; i++) {
-        this.staticStateEls.push(this.newEls[i]);
+      for (let i = this.newEls.children.length - 1; i >= 0; i--) {
+        let element = this.newEls.removeChildAt(i);
+        this.staticStateEls.addChild(element);
       }
+
+      // MUST GET RID OF ACTIVE ELEMENTS
+      for (let i = this.activeEls.children.length - 1; i >= 0; i--) {
+        let element = this.activeEls.children[i];
+        this.activeEls.removeChild(element);
+        element.remove();
+        element.destroy(true);
+      }
+
     }
 
    }
@@ -64,9 +113,12 @@ class Renderer {
   prepareTurnAnimationData(board) {
     this.isAnimatingTurn = true;
 
+    this.staticStateEls.removeChildren();
+
     for (let i = 0; i < board.activeEls.length; i++) {
       let element = board.activeEls[i];
-      this.activeEls.push({
+
+      let dot = new Dot({
         currentX: element.gridPos.x * board.elWidth + board.elWidth / 2,
         currentY: element.gridPos.y * board.elHeight + board.elHeight / 2,
         dotType: element.dotType,
@@ -76,7 +128,9 @@ class Renderer {
         loopedAlpha: 0.5,
         loopCompleted: board.loopCompleted
       });
+      this.activeEls.addChild(dot);
     }
+
     for (let i = 0; i < board.grid.elements.length; i++) {
       let element = board.grid.elements[i];
 
@@ -85,7 +139,7 @@ class Renderer {
         (element.previousGridPos.x !== element.gridPos.x ||
         element.previousGridPos.y !== element.gridPos.y)) {
 
-        this.shiftingEls.push({
+        let dot = new Dot({
           currentX: element.gridPos.x * board.elWidth + board.elWidth / 2,
           currentY: element.gridPos.y * board.elHeight + board.elHeight / 2,
           prevX: element.previousGridPos.x * board.elWidth + board.elWidth / 2,
@@ -96,11 +150,13 @@ class Renderer {
           maxLoopedRadius: board.maxElSize / 1.5,
           loopedAlpha: 0.5,
         });
+        this.shiftingEls.addChild(dot);
       }
 
       // new elements
       else if (!element.previousGridPos) {
-        this.newEls.push({
+
+        let dot = new Dot({
           currentX: element.gridPos.x * board.elWidth + board.elWidth / 2,
           currentY: element.gridPos.y * board.elHeight + board.elHeight / 2,
           prevX: element.gridPos.x * board.elWidth + board.elWidth / 2,
@@ -112,11 +168,14 @@ class Renderer {
           maxLoopedRadius: board.maxElSize / 1.5,
           loopedAlpha: 0.5,
         });
+        this.newEls.addChild(dot);
+
       }
 
       // elements that are not changing position
       else {
-        this.nonShiftingEls.push({
+
+        let dot = new Dot({
           currentX: element.gridPos.x * board.elWidth + board.elWidth / 2,
           currentY: element.gridPos.y * board.elHeight + board.elHeight / 2,
           dotType: element.dotType,
@@ -125,14 +184,15 @@ class Renderer {
           maxLoopedRadius: board.maxElSize / 1.5,
           loopedAlpha: 0.5,
         });
+        this.nonShiftingEls.addChild(dot);
       }
     }
 
-    this.turnAnimationSteps.push(this.shrinkActive().bind(this));
-    // this.turnAnimationSteps.push(this.waitForFrames(25).bind(this));
-    this.turnAnimationSteps.push(this.shiftDown().bind(this));
-    // this.turnAnimationSteps.push(this.waitForFrames(25).bind(this));
-    this.turnAnimationSteps.push(this.populateNew().bind(this));
+    // this.turnAnimationSteps.push(this.shrinkActive().bind(this));
+    // // this.turnAnimationSteps.push(this.waitForFrames(25).bind(this));
+    // this.turnAnimationSteps.push(this.shiftDown().bind(this));
+    // // this.turnAnimationSteps.push(this.waitForFrames(25).bind(this));
+    // this.turnAnimationSteps.push(this.populateNew().bind(this));
   }
 
 
@@ -199,7 +259,6 @@ class Renderer {
       }
 
       if (state.shrinkCompleted) {
-        this.activeEls = [];
         this.turnAnimationSteps.shift();
       }
     }
@@ -346,12 +405,10 @@ class Renderer {
    * Main Render function
    * TODO: add comments and optimize
    */
-  render(board, currentMousePos) {
+  update(board, currentMousePos) {
     if (board.hasChanged && !this.isAnimatingTurn) {
       this.prepareTurnAnimationData(board);
     }
-
-    this.context.clearRect(0, 0, layoutManager.width, layoutManager.height);
 
     // debug draws
     if (window.debug && window.rectBetweenRecents) {
@@ -359,44 +416,43 @@ class Renderer {
     }
 
     if (this.isAnimatingTurn) {
-      if (this.turnAnimationSteps.length > 0) {
-        this.turnAnimationSteps[0](board, currentMousePos);
-      }
+      // if (this.turnAnimationSteps.length > 0) {
+      //   this.turnAnimationSteps[0](board, currentMousePos);
+      // }
 
-      this.drawTurnAnimationBoard(board);
+      // this.drawTurnAnimationBoard(board);
 
       if (this.turnAnimationSteps.length === 0) {
         this.prepareStaticData();
         this.resetRendererState();
         board.setChanged(false);
+        window.gldebug = true;
       }
 
     } else {
 
-      if (board.activeEls.length > 0) {
-        this.drawActiveElConnections(board, currentMousePos);
-      }
+      this.drawActiveElConnections(board, currentMousePos);
 
-      for (var i = 0; i < this.staticStateEls.length; i++) {
-        var element = this.staticStateEls[i];
+      // for (var i = 0; i < this.staticStateEls.length; i++) {
+      //   var element = this.staticStateEls[i];
 
-        if (element) {
+      //   if (element) {
 
-          // increases / decreases size of loopedRadius
-          if (board.loopCompleted &&
-            board.activeEls[0].dotType === element.dotType &&
-            element.loopedRadius < element.maxLoopedRadius) {
+      //     // increases / decreases size of loopedRadius
+      //     if (board.loopCompleted &&
+      //       board.activeEls[0].dotType === element.dotType &&
+      //       element.loopedRadius < element.maxLoopedRadius) {
 
-            element.loopedRadius += 0.5;
-          } else if (!board.loopCompleted &&
-            element.loopedRadius > element.radius) {
+      //       element.loopedRadius += 0.5;
+      //     } else if (!board.loopCompleted &&
+      //       element.loopedRadius > element.radius) {
 
-            element.loopedRadius -= 0.5;
-          }
+      //       element.loopedRadius -= 0.5;
+      //     }
 
-          this.drawElement(board, element, false);
-        }
-      }
+      //     this.drawElement(board, element, false);
+      //   }
+      // }
     }
   }
 
@@ -434,9 +490,6 @@ class Renderer {
 
     this.context.fillStyle = element.dotType.color;
 
-    // let gridX = usePreviousPos ? element.prevX : element.currentX;
-    // let gridY = usePreviousPos ? element.prevY : element.currentY;
-
     let x = usePreviousPos ? element.prevX : element.currentX;
     let y = usePreviousPos ? element.prevY : element.currentY;
 
@@ -457,42 +510,37 @@ class Renderer {
 
 
   drawActiveElConnections(board, currentMousePos) {
-    this.context.beginPath();
-    this.context.lineWidth = board.maxElSize / 4;
-    this.context.strokeStyle = "#333";
+    this.activeElConnections.clear();
+
+    if (board.activeEls.length < 1) return;
+
+    this.activeElConnections.lineStyle(board.maxElSize / 4, 0x333333);
 
     if (board.activeEls.length > 1) {
       for (var i = 1; i < board.activeEls.length; i++) {
         let prevEl = board.activeEls[i - 1];
-        this.context.moveTo(prevEl.gridPos.x * board.elWidth + board.elWidth / 2,
+        this.activeElConnections.moveTo(prevEl.gridPos.x * board.elWidth + board.elWidth / 2,
           prevEl.gridPos.y * board.elHeight + board.elHeight / 2);
 
         let currentEl = board.activeEls[i];
-        this.context.lineTo(currentEl.gridPos.x * board.elWidth + board.elWidth / 2,
+        this.activeElConnections.lineTo(currentEl.gridPos.x * board.elWidth + board.elWidth / 2,
           currentEl.gridPos.y * board.elHeight + board.elHeight / 2);
       }
     }
 
     let lastEl = board.activeEls[board.activeEls.length - 1];
-    this.context.moveTo(lastEl.gridPos.x * board.elWidth + board.elWidth / 2,
+    this.activeElConnections.moveTo(lastEl.gridPos.x * board.elWidth + board.elWidth / 2,
       lastEl.gridPos.y * board.elHeight + board.elHeight / 2);
 
     if (board.loopCompleted) {
       let firstEl = board.activeEls[0];
-      this.context.lineTo(firstEl.gridPos.x * board.elWidth + board.elWidth / 2,
+      this.activeElConnections.lineTo(firstEl.gridPos.x * board.elWidth + board.elWidth / 2,
         firstEl.gridPos.y * board.elHeight + board.elHeight / 2);
     } else {
-      this.context.lineTo(currentMousePos.clientX, currentMousePos.clientY);
+      this.activeElConnections.lineTo(currentMousePos.clientX, currentMousePos.clientY);
     }
-    this.context.stroke();
   }
 
-  drawBackBounds() {
-    this.context.fillStyle = "#ccc";
-    this.context.fillRect(rectBetweenRecents.x, rectBetweenRecents.y,
-      rectBetweenRecents.width, rectBetweenRecents.height);
-
-  }
 }
 
 module.exports = Renderer;

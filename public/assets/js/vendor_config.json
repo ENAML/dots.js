@@ -5,7 +5,7 @@
      */
     "lib/bower/jquery.js",
     // "lib/bower/jquery.mousewheel.js",
-    // "lib/bower/pixi.js",
+    "lib/bower/pixi.js",
     // "lib/bower/underscore.js",
     // "lib/bower/backbone.js",
     // "lib/bower/backbone.babysitter.js",
