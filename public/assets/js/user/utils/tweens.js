@@ -16,8 +16,10 @@ export function getNewTween(obj, props, duration, easingFn, onProgress, onComple
     changes[prop] = props[prop] - starts[prop];
   }
 
+  let currentTime;
+
   return function() {
-    let currentTime = new Date() - startTime;
+    currentTime = new Date() - startTime;
 
     if (currentTime < duration) {
 

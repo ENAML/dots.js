@@ -31,8 +31,8 @@ class Renderer {
       for (let i = 0; i < board.grid.elements.length; i++) {
         let element = board.grid.elements[i];
         this.staticStateEls.push({
-          currentX: element.gridPos.x,
-          currentY: element.gridPos.y,
+          currentX: element.gridPos.x * board.elWidth + board.elWidth / 2,
+          currentY: element.gridPos.y * board.elHeight + board.elHeight / 2,
           dotType: element.dotType,
           radius: board.maxElSize / 2,
           loopedRadius: board.maxElSize / 2,
@@ -67,8 +67,8 @@ class Renderer {
     for (let i = 0; i < board.activeEls.length; i++) {
       let element = board.activeEls[i];
       this.activeEls.push({
-        currentX: element.gridPos.x,
-        currentY: element.gridPos.y,
+        currentX: element.gridPos.x * board.elWidth + board.elWidth / 2,
+        currentY: element.gridPos.y * board.elHeight + board.elHeight / 2,
         dotType: element.dotType,
         radius: board.maxElSize / 2,
         loopedRadius: board.maxElSize / 1.5,
@@ -86,10 +86,10 @@ class Renderer {
         element.previousGridPos.y !== element.gridPos.y)) {
 
         this.shiftingEls.push({
-          currentX: element.gridPos.x,
-          currentY: element.gridPos.y,
-          prevX: element.previousGridPos.x,
-          prevY: element.previousGridPos.y,
+          currentX: element.gridPos.x * board.elWidth + board.elWidth / 2,
+          currentY: element.gridPos.y * board.elHeight + board.elHeight / 2,
+          prevX: element.previousGridPos.x * board.elWidth + board.elWidth / 2,
+          prevY: element.previousGridPos.y * board.elHeight + board.elHeight / 2,
           dotType: element.dotType,
           radius: board.maxElSize / 2,
           loopedRadius: board.maxElSize / 2,
@@ -101,9 +101,9 @@ class Renderer {
       // new elements
       else if (!element.previousGridPos) {
         this.newEls.push({
-          currentX: element.gridPos.x,
-          currentY: element.gridPos.y,
-          prevX: element.gridPos.x,
+          currentX: element.gridPos.x * board.elWidth + board.elWidth / 2,
+          currentY: element.gridPos.y * board.elHeight + board.elHeight / 2,
+          prevX: element.gridPos.x * board.elWidth + board.elWidth / 2,
           prevY: -100,
           dotType: element.dotType,
           radius: 0,
@@ -117,8 +117,8 @@ class Renderer {
       // elements that are not changing position
       else {
         this.nonShiftingEls.push({
-          currentX: element.gridPos.x,
-          currentY: element.gridPos.y,
+          currentX: element.gridPos.x * board.elWidth + board.elWidth / 2,
+          currentY: element.gridPos.y * board.elHeight + board.elHeight / 2,
           dotType: element.dotType,
           radius: board.maxElSize / 2,
           loopedRadius: board.maxElSize / 2,
@@ -219,12 +219,13 @@ class Renderer {
 
     for (let i = 0; i < this.shiftingEls.length; i++) {
       let element = this.shiftingEls[i];
+      let flooredX = Math.floor(element.currentX);
 
-      if (!sortedShift2DArr[element.currentX]) {
-        sortedShift2DArr[element.currentX] = [];
+      if (!sortedShift2DArr[flooredX]) {
+        sortedShift2DArr[flooredX] = [];
       }
 
-      sortedShift2DArr[element.currentX].push(element);
+      sortedShift2DArr[flooredX].push(element);
     }
 
     sortedShift2DArr = sortedShift2DArr.filter(Boolean); // removes empty
@@ -238,7 +239,7 @@ class Renderer {
       }
     }
 
-    let tweenLength = 1000; // in ms
+    let tweenLength = 1500; // in ms
 
     let state = {
       shiftCompleted: true
@@ -433,11 +434,11 @@ class Renderer {
 
     this.context.fillStyle = element.dotType.color;
 
-    let gridX = usePreviousPos ? element.prevX : element.currentX;
-    let gridY = usePreviousPos ? element.prevY : element.currentY;
+    // let gridX = usePreviousPos ? element.prevX : element.currentX;
+    // let gridY = usePreviousPos ? element.prevY : element.currentY;
 
-    let x = gridX * board.elWidth + board.elWidth / 2;
-    let y = gridY * board.elHeight + board.elHeight / 2;
+    let x = usePreviousPos ? element.prevX : element.currentX;
+    let y = usePreviousPos ? element.prevY : element.currentY;
 
     if (element.loopedRadius > element.radius) {
 
