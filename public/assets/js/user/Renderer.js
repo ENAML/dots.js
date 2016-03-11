@@ -1,5 +1,5 @@
-import layoutManager from "layoutManager";
-import * as tweens from "utils/tweens";
+import layoutManager from "./layoutManager";
+import * as tweens from "./utils/tweens";
 
 class Renderer {
   constructor(options) {

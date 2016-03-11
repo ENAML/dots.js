@@ -1,9 +1,6 @@
-//babel polyfill
-import "babelify/polyfill";
 
 // imports
-import GameView from "GameView";
-
+import GameView from "./GameView";
 
 //first thing: monkey patch
 if ( !location.origin ) {

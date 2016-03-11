@@ -1,7 +1,7 @@
-import layoutManager from "layoutManager";
-import Vector from "Vector";
-import Grid from "Grid";
-import Dot from "GameElements/Dot";
+import layoutManager from "./layoutManager";
+import Vector from "./Vector";
+import Grid from "./Grid";
+import Dot from "./GameElements/Dot";
 
 
 class Board {
