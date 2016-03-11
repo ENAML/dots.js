@@ -22,7 +22,7 @@ module.exports = {
     // list vendor libs here
     vendors: [
       // 'pixi.js/src',
-      'jquery'
+      // 'jquery'
     ]
   },
   output: {
@@ -49,7 +49,7 @@ module.exports = {
       },
       {
         test: /\.json$/,
-        // include: path.resolve(__dirname, 'node_modules/pixi.js'),
+        include: path.resolve(__dirname, 'node_modules/pixi.js'),
         loader: 'json'
       },
 
