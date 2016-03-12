@@ -11,6 +11,10 @@ var webpack = require("webpack");
 var WebpackDevServer = require("webpack-dev-server");
 var webpackConfig = require("./webpack.config.js");
 
+// allow inline-mode for dev server
+webpackConfig.entry.app.unshift("webpack-dev-server/client?http://localhost:8080/");
+
+
 // The development server (the recommended option for development)
 gulp.task("default", ["webpack-dev-server"]);
 
@@ -27,7 +31,9 @@ gulp.task("webpack-dev-server", function(callback) {
     stats: {
       colors: true
     },
-    publicPath: '../public/',
+    hot: true,
+    historyApiFallback: true,
+    publicPath: webpackConfig.output.publicPath,
   }).listen(8080, "localhost", function(err) {
     if(err) throw new gutil.PluginError("webpack-dev-server", err);
     gutil.log("[webpack-dev-server]", "http://localhost:8080/webpack-dev-server/index.html");

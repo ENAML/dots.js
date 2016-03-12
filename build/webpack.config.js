@@ -5,9 +5,9 @@ var paths = {
   main: {
     root: path.join(__dirname, '..'),
     entry: path.join(path.resolve('../public'), 'assets/js/user/app.js'),
-    outputDir: path.resolve('../public/assets/js/compiled'),
+    outputDir: path.resolve('../public/assets'),
     publicDir: path.resolve('../public/'),
-    outputFilename: 'bundle.js'
+    outputFilename: '/js/compiled/bundle.js'
   },
   resolve: {
     nodeModulesPath: path.join(__dirname, 'node_modules'),
@@ -17,7 +17,7 @@ var paths = {
 
 module.exports = {
   entry: {
-    app: paths.main.entry,
+    app: [paths.main.entry],
 
     // list vendor libs here
     vendors: [
@@ -27,7 +27,7 @@ module.exports = {
   },
   output: {
     path: paths.main.outputDir,
-    publicPath: '/assets/',
+    publicPath: '../public/assets/', // must be relative to server's root
     filename: paths.main.outputFilename,
   },
 
@@ -60,7 +60,7 @@ module.exports = {
   },
 
   plugins: [
-    new webpack.optimize.CommonsChunkPlugin('vendors', 'vendor.js')
+    new webpack.optimize.CommonsChunkPlugin('vendors', '/js/compiled/vendor.js')
   ],
 
   // for pixi.js
