@@ -1,5 +1,5 @@
 
-import PIXI from 'pixi.js';
+// import PIXI from 'pixi.js';
 
 // imports
 import GameView from "./GameView";

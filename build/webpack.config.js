@@ -27,7 +27,7 @@ module.exports = {
   },
   output: {
     path: paths.main.outputDir,
-    publicPath: 'http://localhost:8080/assets',
+    publicPath: '/assets/',
     filename: paths.main.outputFilename,
   },
 
