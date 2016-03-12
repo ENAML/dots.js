@@ -22,13 +22,17 @@ module.exports = {
     // list vendor libs here
     vendors: [
       // 'pixi.js/src',
-      // 'jquery'
+      // 'jquery/dist/jquery.min'
     ]
   },
   output: {
     path: paths.main.outputDir,
+    publicPath: 'http://localhost:8080/assets',
     filename: paths.main.outputFilename,
   },
+
+  debug: true,
+  devtool: 'source-map',
 
   module: {
     loaders: [
@@ -49,25 +53,14 @@ module.exports = {
       },
       {
         test: /\.json$/,
-        include: path.resolve(__dirname, 'node_modules/pixi.js'),
+        // include: path.resolve(__dirname, 'node_modules/pixi.js'),
         loader: 'json'
-      },
-
-      // for jquery
-      {
-        test: /jquery[\\\/]src[\\\/]selector\.js$/, loader: 'amd-define-factory-patcher-loader'
       }
     ],
   },
 
   plugins: [
-    new webpack.optimize.CommonsChunkPlugin('vendors', 'vendor.js'),
-    new webpack.ProvidePlugin({
-      $: "jquery",
-      jQuery: "jquery",
-      'window.$' : 'jquery',
-      'window.jQuery' : 'jquery'
-    })
+    new webpack.optimize.CommonsChunkPlugin('vendors', 'vendor.js')
   ],
 
   // for pixi.js
@@ -77,9 +70,6 @@ module.exports = {
 
   resolve: {
     root: [paths.resolve.nodeModulesPath, paths.resolve.bowerComponentsPath],
-    alias: {
-      // jquery: "jquery/src/jquery"
-    }
   },
 
   resolveLoader: {
