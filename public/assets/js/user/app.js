@@ -20,7 +20,6 @@ window.debug = true;
 
 $( window ).resize();
 
-
 class MyApp {
   constructor() {
     this.$el = $('#content');

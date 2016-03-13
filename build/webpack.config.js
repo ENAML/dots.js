@@ -9,7 +9,7 @@ var paths = {
     root: path.join(__dirname, '..'),
     entry: path.join(path.resolve('../public'), 'assets/js/user/app.js'),
     outputDir: path.resolve('../public/dist'),
-    publicDir: path.resolve('../public/'),
+    publicPath: 'dist/',
     outputFilename: 'bundle.js'
   },
   resolve: {
@@ -34,7 +34,7 @@ module.exports = {
   },
   output: {
     path: paths.main.outputDir,
-    publicPath: 'dist/', // all outputted files must be DIRECTLY in this dir (can't be in sub-folders)
+    publicPath: paths.main.publicPath, // all outputted files must be DIRECTLY in this dir (can't be in sub-folders)
     filename: paths.main.outputFilename,
   },
 
