@@ -103,7 +103,11 @@ module.exports = {
   },
 
   resolve: {
-    root: [paths.resolve.nodeModulesPath, paths.resolve.bowerComponentsPath, paths.resolve.sassPath],
+    root: [
+      paths.resolve.nodeModulesPath,
+      paths.resolve.bowerComponentsPath,
+      paths.resolve.sassPath
+    ],
     extensions: ['', '.jsx', '.js', '.json', '.css', '.scss', '.html']
   },
 
