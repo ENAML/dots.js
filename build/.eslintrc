@@ -11,6 +11,15 @@
     "browser": true,
     "node": true
   },
+  "globals": {
+    // global vendor
+    "$": true,
+    "PIXI": true,
+    "Stats": true,
+
+    // bundle specific
+    "rectBetweenRecents": true
+  },
   "plugins": [
     "react"
   ],

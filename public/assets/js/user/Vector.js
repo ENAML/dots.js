@@ -14,7 +14,7 @@ class Vector {
     return new Vector(this.x - vector.x, this.y - vector.y);
   }
 
-  multiply(valX) {
+  multiply(val) {
     return new Vector(this.x * val, this.y * val);
   }
 }

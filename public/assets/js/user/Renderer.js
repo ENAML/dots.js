@@ -489,8 +489,8 @@ class Renderer {
 
   drawBackBounds() {
     this.context.fillStyle = "#ccc";
-    this.context.fillRect(rectBetweenRecents.x, rectBetweenRecents.y,
-      rectBetweenRecents.width, rectBetweenRecents.height);
+    this.context.fillRect(window.rectBetweenRecents.x, window.rectBetweenRecents.y,
+      window.rectBetweenRecents.width, window.rectBetweenRecents.height);
 
   }
 }
