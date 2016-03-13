@@ -1,13 +1,14 @@
 var webpack = require('webpack');
 var path = require('path');
 
+
 var paths = {
   main: {
     root: path.join(__dirname, '..'),
     entry: path.join(path.resolve('../public'), 'assets/js/user/app.js'),
-    outputDir: path.resolve('../public/assets'),
+    outputDir: path.resolve('../public/dist'),
     publicDir: path.resolve('../public/'),
-    outputFilename: '/js/compiled/bundle.js'
+    outputFilename: 'bundle.js'
   },
   resolve: {
     nodeModulesPath: path.join(__dirname, 'node_modules'),
@@ -16,25 +17,32 @@ var paths = {
 };
 
 module.exports = {
+  debug: true,
+  devtool: 'source-map',
+
   entry: {
     app: [paths.main.entry],
 
     // list vendor libs here
     vendors: [
-      // 'pixi.js/src',
-      // 'jquery/dist/jquery.min'
+      'pixi.js/src',
+      'jquery'
     ]
   },
   output: {
     path: paths.main.outputDir,
-    publicPath: '../public/assets/', // must be relative to server's root
+    publicPath: 'dist/', // all outputted files must be DIRECTLY in this dir (can't be in sub-folders)
     filename: paths.main.outputFilename,
   },
 
-  debug: true,
-  devtool: 'source-map',
-
   module: {
+    preLoaders: [
+      {
+        test: /\.jsx?$/,
+        loaders: ['eslint'],
+        exclude: /(node_modules|bower_components)/
+      }
+    ],
     loaders: [
       {
         test: /\.jsx?$/,
@@ -60,7 +68,16 @@ module.exports = {
   },
 
   plugins: [
-    new webpack.optimize.CommonsChunkPlugin('vendors', '/js/compiled/vendor.js')
+    new webpack.optimize.CommonsChunkPlugin('vendors', 'vendor.js'),
+    new webpack.ProvidePlugin({
+      // Automtically detect jQuery and $ as free var in modules
+      // and inject the jquery library
+      // This is required by many jquery plugins
+      jQuery: "jquery",
+      $: "jquery",
+      'window.$': 'jquery',
+      'window.jQuery': 'jquery'
+    })
   ],
 
   // for pixi.js
@@ -70,10 +87,15 @@ module.exports = {
 
   resolve: {
     root: [paths.resolve.nodeModulesPath, paths.resolve.bowerComponentsPath],
+    extensions: ['', '.js', '.json', '.coffee']
   },
 
   resolveLoader: {
     root: [paths.resolve.nodeModulesPath]
-  }
+  },
 
+
+  eslint: {
+    configFile: '.eslintrc'
+  }
 };

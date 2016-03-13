@@ -27,7 +27,6 @@ class MyApp {
     });
 
     this.start();
-
   }
 
   start() {
@@ -36,13 +35,33 @@ class MyApp {
     $( window ).resize();
   }
 
-};
-
+}
 
 //kickoff app
-$( () => {
-  window.FastClick.attach(document.body);
-  window.app = new MyApp();
+if (inIframe()) {
+  $(window).load(() => {
+    console.log('starting app');
+    start();
+  });
+} else {
+  $(window).load(() => {
+    console.log('starting app');
+    start();
+  });
+}
 
-  (function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();stats.domElement.style.cssText='position:fixed;left:0;top:0;z-index:10000';document.body.appendChild(stats.domElement);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//rawgit.com/mrdoob/stats.js/master/build/stats.min.js';document.head.appendChild(script);})()
-} );
+
+function start() {
+  setTimeout(() => {
+    window.app = new MyApp();
+    (function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();stats.domElement.style.cssText='position:fixed;left:0;top:0;z-index:10000';document.body.appendChild(stats.domElement);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//rawgit.com/mrdoob/stats.js/master/build/stats.min.js';document.head.appendChild(script);})()
+  }, 1000)
+}
+
+function inIframe() {
+  try {
+    return window.self !== window.top;
+  } catch (e) {
+    return true;
+  }
+}

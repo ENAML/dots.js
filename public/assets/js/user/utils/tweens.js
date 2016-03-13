@@ -11,7 +11,9 @@ export function getNewTween(obj, props, duration, easingFn, onProgress, onComple
   let changes = {};
   let startTime = new Date();
 
-  for(var prop in props) {
+  var prop;
+
+  for(prop in props) {
     starts[prop] = obj[prop];
     changes[prop] = props[prop] - starts[prop];
   }
@@ -23,7 +25,7 @@ export function getNewTween(obj, props, duration, easingFn, onProgress, onComple
 
     if (currentTime < duration) {
 
-      for (var prop in props) {
+      for (prop in props) {
         obj[prop] = easingFn(currentTime, starts[prop], changes[prop], duration);
       }
 
@@ -45,6 +47,8 @@ export function getNewTween(obj, props, duration, easingFn, onProgress, onComple
   }
 }
 
+
+/* eslint-disable */
 
 // simple linear tweening - no easing
 // t: current time, b: beginning value, c: change in value, d: duration
@@ -121,3 +125,8 @@ export function easeInOutQuint(t, b, c, d) {
   if ((t/=d/2) < 1) return c/2*t*t*t*t*t + b;
   return c/2*((t-=2)*t*t*t*t + 2) + b;
 };
+
+
+
+
+/* eslint-enable */

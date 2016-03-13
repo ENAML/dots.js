@@ -4,6 +4,8 @@
 - Basics
     + http://blog.madewithlove.be/post/webpack-your-bags/
     + https://github.com/petehunt/webpack-howto
+- Examples
+    + https://github.com/webpack/webpack-with-common-libs
 - Splitting app.js and vendor.js
     + http://survivejs.com/webpack/splitting-app-and-vendors/
 - PIXI.js (and probably a lot of other libs) is annoying to get working
