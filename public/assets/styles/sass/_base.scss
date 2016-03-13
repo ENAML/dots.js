@@ -5,16 +5,9 @@ body, html {
     background-color: $background-color;
 }
 
-#page-container {
-  width: 70%;
-  max-width: 1000px;
-  margin: 0 auto;
-
-  opacity: 0;
-  visibility: hidden;
-}
 
 #content {
+  // margin-top: 150px;
   position: fixed;
   top: 0;
   bottom: 0;

@@ -1,3 +1,8 @@
+/**
+ * TUTORIAL ON SETTING UP ESLINT FOR USE WITH WEBPACK:
+ * https://survivejs.com/webpack_react/linting_in_webpack/
+ */
+
 {
   "extends": "eslint:recommended",
   "parserOptions": {
@@ -9,7 +14,8 @@
   },
   "env": {
     "browser": true,
-    "node": true
+    "node": true,
+    "commonjs": true // and use require() for stylesheets
   },
   "globals": {
     // global vendor

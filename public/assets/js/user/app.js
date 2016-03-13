@@ -1,3 +1,6 @@
+import 'app.scss';
+
+
 
 // import PIXI from 'pixi.js';
 
@@ -40,8 +43,10 @@ class MyApp {
 //kickoff app
 if (inIframe()) {
   $(window).load(() => {
-    console.log('starting app');
-    start();
+    console.log('starting app (in iframe)');
+    setTimeout(() => {
+      start();
+    }, 1000);
   });
 } else {
   $(window).load(() => {
@@ -52,10 +57,8 @@ if (inIframe()) {
 
 
 function start() {
-  setTimeout(() => {
-    window.app = new MyApp();
-    (function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();stats.domElement.style.cssText='position:fixed;left:0;top:0;z-index:10000';document.body.appendChild(stats.domElement);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//rawgit.com/mrdoob/stats.js/master/build/stats.min.js';document.head.appendChild(script);})()
-  }, 1000)
+  window.app = new MyApp();
+  (function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();stats.domElement.style.cssText='position:fixed;left:0;top:0;z-index:10000';document.body.appendChild(stats.domElement);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//rawgit.com/mrdoob/stats.js/master/build/stats.min.js';document.head.appendChild(script);})()
 }
 
 function inIframe() {

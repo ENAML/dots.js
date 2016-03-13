@@ -1,4 +1,6 @@
 var webpack = require('webpack');
+var ExtractTextPlugin = require("extract-text-webpack-plugin");
+
 var path = require('path');
 
 
@@ -12,7 +14,8 @@ var paths = {
   },
   resolve: {
     nodeModulesPath: path.join(__dirname, 'node_modules'),
-    bowerComponentsPath: path.join(__dirname, 'bower_components')
+    bowerComponentsPath: path.join(__dirname, 'bower_components'),
+    sassPath: path.resolve('../public/assets/styles/sass')
   }
 };
 
@@ -21,7 +24,7 @@ module.exports = {
   devtool: 'source-map',
 
   entry: {
-    app: [paths.main.entry],
+    app: paths.main.entry,
 
     // list vendor libs here
     vendors: [
@@ -60,11 +63,24 @@ module.exports = {
         }
       },
       {
+        test: /\.scss$/,
+        loader: ExtractTextPlugin.extract(
+          'style', // The backup style loader
+          'css?sourceMap!sass?sourceMap')
+
+          // doesn't seem necessary anymore
+          // 'css?sourceMap!sass?sourceMap?includePaths[]=' + paths.resolve.sassPath)
+      },
+      {
         test: /\.json$/,
         // include: path.resolve(__dirname, 'node_modules/pixi.js'),
         loader: 'json'
       }
     ],
+  },
+
+  sassLoader: {
+    includePaths: [ path.resolve('../public/assets/styles/sass') ]
   },
 
   plugins: [
@@ -77,7 +93,8 @@ module.exports = {
       $: "jquery",
       'window.$': 'jquery',
       'window.jQuery': 'jquery'
-    })
+    }),
+    new ExtractTextPlugin("app.css"),
   ],
 
   // for pixi.js
@@ -86,8 +103,8 @@ module.exports = {
   },
 
   resolve: {
-    root: [paths.resolve.nodeModulesPath, paths.resolve.bowerComponentsPath],
-    extensions: ['', '.js', '.json', '.coffee']
+    root: [paths.resolve.nodeModulesPath, paths.resolve.bowerComponentsPath, paths.resolve.sassPath],
+    extensions: ['', '.jsx', '.js', '.json', '.css', '.scss', '.html']
   },
 
   resolveLoader: {
