@@ -130,6 +130,7 @@ class GameView {
       neighbors.indexOf(hoverEl) !== -1 &&
       this.board.activeEls.length >= 4) {
 
+      this.board.activeEls.push(hoverEl);
       this.board.loopCompleted = true;
     }
   }

@@ -103,6 +103,8 @@ class Renderer {
         element.destroy(true);
       }
 
+      this.activeElConnections.clear();
+      this.activeElConnections.alpha = 1;
     }
 
    }
@@ -124,7 +126,7 @@ class Renderer {
         currentY: element.gridPos.y * board.elHeight + board.elHeight / 2,
         dotType: element.dotType,
         radius: board.maxElSize / 2,
-        loopedRadius: board.maxElSize / 1.5,
+        loopedRadius: board.loopCompleted ? board.maxElSize / 1.5 : board.maxElSize / 2,
         maxLoopedRadius: board.maxElSize / 1.5,
         loopedAlpha: 0.5,
         loopCompleted: board.loopCompleted
@@ -193,6 +195,7 @@ class Renderer {
     this.usePrevPosForShiftingEls = true;
 
     // this.turnAnimationSteps.push(this.waitForFrames(20).bind(this));
+    this.turnAnimationSteps.push(this.hideActiveElConnection().bind(this));
     this.turnAnimationSteps.push(this.shrinkActive().bind(this));
     this.turnAnimationSteps.push(this.shiftDown().bind(this));
     // this.turnAnimationSteps.push(this.waitForFrames(25).bind(this));
@@ -217,6 +220,40 @@ class Renderer {
     }
   }
 
+
+  // hides activeElConnections lines
+  hideActiveElConnection() {
+    let tweenLength = 200; // in ms
+
+    let state = {
+      hideCompleted: true
+    };
+
+    let tween;
+
+    return function() {
+      if (!this.usePrevPosForShiftingEls) this.usePrevPosForShiftingEls = true;
+
+      state.hideCompleted = true;
+
+      if (!tween) {
+        tween = tweens.getNewTween(this.activeElConnections, {
+          alpha: 0,
+        }, tweenLength, tweens.easeInOutQuint,
+        (args) => {
+          args[0].hideCompleted = false;
+        });
+      }
+
+      tween(state);
+
+      if (state.hideCompleted) {
+        this.turnAnimationSteps.shift();
+      }
+    }
+  }
+
+
   // animation to shrink all activeEls
   shrinkActive() {
 
@@ -240,13 +277,6 @@ class Renderer {
         let element = this.activeEls.children[i];
 
         if (!element.tween) {
-          
-          // need to set this when the loop hasn't been completed
-          // because the drawElement function will always draw the
-          // looped radius if it is larger than the radius
-          if (!element.loopCompleted) {
-            element.loopedRadius = element.radius;
-          }
 
           element.tween = tweens.getNewTween(element, {
             radius: 0,
@@ -275,7 +305,7 @@ class Renderer {
    */
   shiftDown() {
 
-    let baseShiftFrameDelay = 1;
+    let baseShiftFrameDelay = 2;
 
     // sort elements into 2D array of [x][y]
     let sortedShift2DArr = [];
@@ -330,7 +360,7 @@ class Renderer {
           if (!element.tween) {
             element.tween = tweens.getNewTween(element, {
               prevY: element.currentY
-            }, tweenLength, tweens.easeInOutQuint,
+            }, tweenLength, tweens.easeOutBounce,
             (args) => {
               args[0].shiftCompleted = false;
             });
@@ -358,7 +388,7 @@ class Renderer {
         Math.random() * totalNewEls);
     }
 
-    let tweenLength = 500; // in ms
+    let tweenLength = 800; // in ms
 
     let state = {
       populationComplete: true
@@ -384,7 +414,7 @@ class Renderer {
           element.tween = tweens.getNewTween(element, {
             radius: element.destRadius,
             loopedRadius: element.destRadius
-          }, tweenLength, tweens.easeInOutQuad,
+          }, tweenLength, tweens.easeOutBack,
           (args) => {
             args[0].populationComplete = false;
           });

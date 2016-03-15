@@ -83,8 +83,11 @@ class Board {
   startTurn() {
 
     // if loop is complete, change activeEls to be array including
-    // every single element of activeEls type / id / color
+    // every single element of activeEls type / id / color.
+    // ALSO: need to pop lasts element of activeEls array
+    // because it is a repeat of the last.
     if (this.loopCompleted) {
+      this.activeEls.pop();
       let typeId = this.activeEls[0].dotType.id;
       for (let i = 0; i < this.grid.elements.length; i++) {
         let element = this.grid.elements[i];
