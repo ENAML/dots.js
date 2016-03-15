@@ -1,5 +1,3 @@
-
-import layoutManager from "./layoutManager";
 import Dot from "./RendererElements/Dot";
 import * as tweens from "./utils/tweens";
 
@@ -257,7 +255,7 @@ class Renderer {
   // animation to shrink all activeEls
   shrinkActive() {
 
-    let tweenLength = 1000; // in ms
+    let tweenLength = 500; // in ms
 
     // need to store shiftCompleted in object so that it
     // can be modified by tween's onComplete function

@@ -137,7 +137,7 @@ class GameView {
 
 
   /**
-   * This method is pretty complicated. In short, it determines when to remove
+   * This method is kinda complicated. In short, it determines when to remove
    * the last element of the activeEls array when the user is trying to. It could
    * probably be simplified vastly but it seems to work for now.
    *
