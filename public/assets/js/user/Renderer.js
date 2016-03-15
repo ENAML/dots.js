@@ -191,7 +191,7 @@ class Renderer {
 
     this.usePrevPosForShiftingEls = true;
 
-    this.turnAnimationSteps.push(this.waitForFrames(50).bind(this));
+    // this.turnAnimationSteps.push(this.waitForFrames(20).bind(this));
     this.turnAnimationSteps.push(this.shrinkActive().bind(this));
     this.turnAnimationSteps.push(this.shiftDown().bind(this));
     // this.turnAnimationSteps.push(this.waitForFrames(25).bind(this));
@@ -415,10 +415,14 @@ class Renderer {
 
     if (this.isAnimatingTurn) {
       if (this.turnAnimationSteps.length > 0) {
-        this.turnAnimationSteps[0](board, currentMousePos);
+        // this.turnAnimationSteps[0](board, currentMousePos);
       }
 
-      this.drawTurnAnimationBoard(board);
+      if (!window.firstDrawDone) {
+        window.firstDrawDone = true;
+        this.drawTurnAnimationBoard(board);
+      }
+      
 
       if (this.turnAnimationSteps.length === 0) {
         this.prepareStaticData();
