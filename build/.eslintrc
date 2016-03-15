@@ -44,6 +44,7 @@
     "comma-dangle": 0,
     "no-undef": 1,
     "no-extra-semi": 1,
-    "no-unused-vars": 1
+    "no-unused-vars": 1,
+    "no-debugger": 0
   }
 }
