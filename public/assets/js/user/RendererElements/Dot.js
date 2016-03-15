@@ -41,6 +41,7 @@ class Dot extends PIXI.Container {
     // redraw looped circle
     if (this.children[0].radius !== this.loopedRadius ||
       this.children[0].alpha !== this.loopedAlpha) {
+
       this.children[0].redraw(this.loopedRadius, this.loopedAlpha);
     }
 

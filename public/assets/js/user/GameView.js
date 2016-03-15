@@ -1,7 +1,7 @@
-import layoutManager from "layoutManager";
-import mathUtils from "utils/mathUtils";
-import Board from "Board";
-import Renderer from "Renderer";
+import layoutManager from "./layoutManager";
+import mathUtils from "./utils/mathUtils";
+import Board from "./Board";
+import Renderer from "./Renderer";
 
 class GameView {
   constructor(options) {

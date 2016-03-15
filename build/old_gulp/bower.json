@@ -13,15 +13,20 @@
     "tests"
   ],
   "dependencies": {
+    "backbone": "~1.1.2",
+    "backbone-fetch-cache": "~1.5.5",
+    "backbone.marionette": "~2.4.1",
+    "color": "~2.5.0",
     "fastclick": "~1.0.6",
+    "jquery": "~2.1.4",
+    "jquery-mousewheel": "~3.1.13",
     "js-cookie": "~1.5.1",
     "moment": "~2.10.3",
     "slick.js": "~1.5.2",
     "underscore": "~1.8.3",
     "velocity": "~1.2.2",
     "backbone.radio": "~1.0.2",
-    "pixi.js": "~3.0.10"
-    "bourbon": "~4.2.6"
+    "pixi.js": "~3.0.8"
   },
   "overrides": {},
   "resolutions": {

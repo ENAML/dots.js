@@ -7,7 +7,7 @@ class LayoutManager {
   constructor() {
     this.width = window.innerWidth;
     this.height = window.innerHeight;
-
+    
     this.bindEvents();
   }
 
@@ -18,6 +18,7 @@ class LayoutManager {
     });
   }
 }
+
 
 const layoutManager = new LayoutManager();
 

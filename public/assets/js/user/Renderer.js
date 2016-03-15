@@ -1,6 +1,7 @@
-import layoutManager from "layoutManager";
-import Dot from "RendererElements/Dot";
-import * as tweens from "utils/tweens";
+
+import layoutManager from "./layoutManager";
+import Dot from "./RendererElements/Dot";
+import * as tweens from "./utils/tweens";
 
 class Renderer {
   constructor(options) {
@@ -188,8 +189,10 @@ class Renderer {
       }
     }
 
+    this.usePrevPosForShiftingEls = true;
+
+    this.turnAnimationSteps.push(this.waitForFrames(50).bind(this));
     this.turnAnimationSteps.push(this.shrinkActive().bind(this));
-    // this.turnAnimationSteps.push(this.waitForFrames(25).bind(this));
     this.turnAnimationSteps.push(this.shiftDown().bind(this));
     // this.turnAnimationSteps.push(this.waitForFrames(25).bind(this));
     this.turnAnimationSteps.push(this.populateNew().bind(this));
@@ -298,7 +301,7 @@ class Renderer {
       }
     }
 
-    let tweenLength = 3000; // in ms
+    let tweenLength = 1000; // in ms
 
     let state = {
       shiftCompleted: true
@@ -428,26 +431,26 @@ class Renderer {
 
       this.drawActiveElConnections(board, currentMousePos);
 
-      // for (var i = 0; i < this.staticStateEls.length; i++) {
-      //   var element = this.staticStateEls[i];
+      for (let i = 0; i < this.staticStateEls.children.length; i++) {
+        let element = this.staticStateEls.children[i];
 
-      //   if (element) {
+        if (element) {
 
-      //     // increases / decreases size of loopedRadius
-      //     if (board.loopCompleted &&
-      //       board.activeEls[0].dotType === element.dotType &&
-      //       element.loopedRadius < element.maxLoopedRadius) {
+          // increases / decreases size of loopedRadius
+          if (board.loopCompleted &&
+            board.activeEls[0].dotType === element.dotType &&
+            element.loopedRadius < element.maxLoopedRadius) {
 
-      //       element.loopedRadius += 0.5;
-      //     } else if (!board.loopCompleted &&
-      //       element.loopedRadius > element.radius) {
+            element.loopedRadius += 0.5;
+          } else if (!board.loopCompleted &&
+            element.loopedRadius > element.radius) {
 
-      //       element.loopedRadius -= 0.5;
-      //     }
+            element.loopedRadius -= 0.5;
+          }
 
-      //     this.drawElement(board, element, false);
-      //   }
-      // }
+          element.update(false);
+        }
+      }
     }
   }
 
