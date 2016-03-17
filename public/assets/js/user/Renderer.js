@@ -1,8 +1,10 @@
-import Dot from "./RendererElements/Dot";
+import Dot from "./rendererComponents/Dot";
+import * as turnAnimations from "./rendererComponents/turnAnimations";
 import * as tweens from "./utils/tweens";
 
 class Renderer {
   constructor(options) {
+    console.log('this')
     this.renderer = options.renderer;
     this.stage = new PIXI.Container();
 
@@ -83,14 +85,17 @@ class Renderer {
       for (let i = this.shiftingEls.children.length - 1; i >= 0; i--) {
         let element = this.shiftingEls.removeChildAt(i);
         this.staticStateEls.addChild(element);
+        if (element.tween) element.tween = null;
       }
       for (let i = this.nonShiftingEls.children.length - 1; i >= 0; i--) {
         let element = this.nonShiftingEls.removeChildAt(i);
         this.staticStateEls.addChild(element);
+        if (element.tween) element.tween = null;
       }
       for (let i = this.newEls.children.length - 1; i >= 0; i--) {
         let element = this.newEls.removeChildAt(i);
         this.staticStateEls.addChild(element);
+        if (element.tween) element.tween = null;
       }
 
       // MUST GET RID OF ACTIVE ELEMENTS
@@ -192,244 +197,11 @@ class Renderer {
 
     this.usePrevPosForShiftingEls = true;
 
-    // this.turnAnimationSteps.push(this.waitForFrames(20).bind(this));
-    this.turnAnimationSteps.push(this.hideActiveElConnection().bind(this));
-    this.turnAnimationSteps.push(this.shrinkActive().bind(this));
-    this.turnAnimationSteps.push(this.shiftDown().bind(this));
-    // this.turnAnimationSteps.push(this.waitForFrames(25).bind(this));
-    this.turnAnimationSteps.push(this.populateNew().bind(this));
-  }
-
-
-  /**
-   * Animation Code
-   */
-
-  // returns a function that has access to the number of frames
-  // to wait (in a closure) and counts down to that. it shifts itself
-  // off of array once the value is 0 or less
-  waitForFrames(frames) {
-    return function() {
-      frames--;
-
-      if (frames < 0) {
-        this.turnAnimationSteps.shift();
-      }
-    }
-  }
-
-
-  // hides activeElConnections lines
-  hideActiveElConnection() {
-    let tweenLength = 200; // in ms
-
-    let state = {
-      hideCompleted: true
-    };
-
-    let tween;
-
-    return function() {
-      if (!this.usePrevPosForShiftingEls) this.usePrevPosForShiftingEls = true;
-
-      state.hideCompleted = true;
-
-      if (!tween) {
-        tween = tweens.getNewTween(this.activeElConnections, {
-          alpha: 0,
-        }, tweenLength, tweens.easeInOutQuint,
-        (args) => {
-          args[0].hideCompleted = false;
-        });
-      }
-
-      tween(state);
-
-      if (state.hideCompleted) {
-        this.turnAnimationSteps.shift();
-      }
-    }
-  }
-
-
-  // animation to shrink all activeEls
-  shrinkActive() {
-
-    let tweenLength = 500; // in ms
-
-    // need to store shiftCompleted in object so that it
-    // can be modified by tween's onComplete function
-    // (just passing a boolean won't work because booleans
-    // don't keep memory references and thus it wouldn't
-    // be the same variable)
-    let state = {
-      shrinkCompleted: true
-    };
-
-    return function() {
-      if (!this.usePrevPosForShiftingEls) this.usePrevPosForShiftingEls = true;
-
-      state.shrinkCompleted = true;
-
-      for (let i = 0; i < this.activeEls.children.length; i++) {
-        let element = this.activeEls.children[i];
-
-        if (!element.tween) {
-
-          element.tween = tweens.getNewTween(element, {
-            radius: 0,
-            loopedRadius: element.radius * 1.75,
-            loopedAlpha: 0
-          }, tweenLength, tweens.easeInOutQuint,
-          (args) => {
-            args[0].shrinkCompleted = false;
-          });
-        }
-
-        element.tween(state);
-
-      }
-
-      if (state.shrinkCompleted) {
-        this.turnAnimationSteps.shift();
-      }
-    }
-  }
-
-  /**
-   * sorts array into a 2d array of [x][y] values, where the
-   * x-value determines the delay time before it can start
-   * shifting downwards. Then returns the animation function.
-   */
-  shiftDown() {
-
-    let baseShiftFrameDelay = 2;
-
-    // sort elements into 2D array of [x][y]
-    let sortedShift2DArr = [];
-
-    for (let i = 0; i < this.shiftingEls.children.length; i++) {
-      let element = this.shiftingEls.children[i];
-      let flooredX = Math.floor(element.currentX);
-
-      if (!sortedShift2DArr[flooredX]) {
-        sortedShift2DArr[flooredX] = [];
-      }
-
-      sortedShift2DArr[flooredX].push(element);
-    }
-
-    sortedShift2DArr = sortedShift2DArr.filter(Boolean); // removes empty
-
-    // add frame delays based on prevX and prevY values
-    for (let i = 0; i < sortedShift2DArr.length; i++) {
-      let elementArr = sortedShift2DArr[i];
-
-      for (let j = 0; j < elementArr.length; j++) {
-        elementArr[j].shiftFrameDelay = baseShiftFrameDelay * i;
-      }
-    }
-
-    let tweenLength = 1000; // in ms
-
-    let state = {
-      shiftCompleted: true
-    };
-
-    return function() {
-      if (!this.usePrevPosForShiftingEls) this.usePrevPosForShiftingEls = true;
-
-      state.shiftCompleted = true;
-
-      let i, j, element;
-
-      for (i = 0; i < sortedShift2DArr.length; i++) {
-        for (j = 0; j < sortedShift2DArr[i].length; j++) {
-          element = sortedShift2DArr[i][j];
-
-          // increment wait frames down until 0
-          if (element.shiftFrameDelay > 0) {
-            element.shiftFrameDelay -= 1;
-            state.shiftCompleted = false;
-            continue;
-          }
-
-          // stores new tween function to be called on every frame
-          if (!element.tween) {
-            element.tween = tweens.getNewTween(element, {
-              prevY: element.currentY
-            }, tweenLength, tweens.easeOutBounce,
-            (args) => {
-              args[0].shiftCompleted = false;
-            });
-          }
-
-          element.tween(state);
-        }
-      }
-
-      if (state.shiftCompleted) {
-        for (i = 0; i < this.shiftingEls.length; i++) {
-          this.shiftingEls[i].tween = null;
-        }
-
-        this.turnAnimationSteps.shift();
-      }
-    }
-  }
-
-  // increase radius of new els until they reach normal size
-  populateNew() {
-    let totalNewEls = this.newEls.children.length;
-    for (let i = 0; i < totalNewEls; i++) {
-      this.newEls.children[i].spawnFrameDelay = Math.floor(
-        Math.random() * totalNewEls);
-    }
-
-    let tweenLength = 800; // in ms
-
-    let state = {
-      populationComplete: true
-    };
-
-    return function() {
-      if (this.usePrevPosForShiftingEls) this.usePrevPosForShiftingEls = false;
-      if (!this.canShowNew) this.canShowNew = true;
-
-      state.populationComplete = true;
-
-      for (let i = 0; i < this.newEls.children.length; i++) {
-        let element = this.newEls.children[i];
-
-        if (element.spawnFrameDelay > 0) {
-          element.spawnFrameDelay -= 1;
-          state.populationComplete = false;
-          continue;
-        }
-
-        // stores new tween function to be called on every frame
-        if (!element.tween) {
-          element.tween = tweens.getNewTween(element, {
-            radius: element.destRadius,
-            loopedRadius: element.destRadius
-          }, tweenLength, tweens.easeOutBack,
-          (args) => {
-            args[0].populationComplete = false;
-          });
-        }
-
-        element.tween(state);
-
-      }
-
-      if (state.populationComplete) {
-        for (let i = 0; i < this.newEls.length; i++) {
-          this.newEls[i].tween = null;
-        }
-
-        this.turnAnimationSteps.shift();
-      }
-    }
+    // this.turnAnimationSteps.push(turnAnimations.waitForFrames(this, 50));
+    this.turnAnimationSteps.push(turnAnimations.hideActiveElConnection(this));
+    this.turnAnimationSteps.push(turnAnimations.shrinkActive(this));
+    this.turnAnimationSteps.push(turnAnimations.shiftDown(this));
+    this.turnAnimationSteps.push(turnAnimations.populateNew(this));
   }
 
 
@@ -453,7 +225,6 @@ class Renderer {
         this.prepareStaticData();
         this.resetRendererState();
         board.setChanged(false);
-        window.gldebug = true;
       }
 
     } else {
@@ -465,18 +236,33 @@ class Renderer {
 
         if (element) {
 
+
           // increases / decreases size of loopedRadius
           if (board.loopCompleted &&
             board.activeEls[0].dotType === element.dotType &&
-            element.loopedRadius < element.maxLoopedRadius) {
+            element.loopedRadius < element.maxLoopedRadius &&
+            !element.tween) {
 
-            element.loopedRadius += 0.5;
+            element.tween = tweens.getNewTween(element, {
+              loopedRadius: element.maxLoopedRadius
+            }, 300, tweens.easeInOutQuad, null,
+            () => {
+              element.tween = null;
+            });
+
           } else if (!board.loopCompleted &&
-            element.loopedRadius > element.radius) {
+            element.loopedRadius > element.radius &&
+            !element.tween) {
 
-            element.loopedRadius -= 0.5;
+            element.tween = tweens.getNewTween(element, {
+              loopedRadius: element.radius
+            }, 300, tweens.easeInOutQuad, null,
+            () => {
+              element.tween = null;
+            });
+
           }
-
+          if (element.tween) element.tween();
           element.update(false);
         }
       }

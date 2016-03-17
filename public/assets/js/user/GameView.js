@@ -3,6 +3,8 @@ import mathUtils from "./utils/mathUtils";
 import Board from "./Board";
 import Renderer from "./Renderer";
 
+import animationTest from "./utils/animationTest";
+
 class GameView {
   constructor(options) {
     this.el = PIXI.autoDetectRenderer(layoutManager.width,
@@ -11,7 +13,10 @@ class GameView {
     options.container.append(this.el.view);
 
     this.mousePressed = false;
-    this.currentMousePos = null;
+    this.currentMousePos = {
+      clientX: 0,
+      clientY: 0
+    };
 
   }
 
@@ -223,8 +228,12 @@ class GameView {
    * Main Update Loop
    */
   update() {
-
     requestAnimationFrame(this.update);
+
+    if (!this.board.hasChanged) {
+      animationTest(this.board);
+    }
+
     this.renderController.update(this.board, this.currentMousePos);
     this.renderController.renderer.render(this.renderController.stage);
   }

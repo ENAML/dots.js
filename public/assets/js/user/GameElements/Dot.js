@@ -10,18 +10,18 @@ const DOTTYPES = [
   // {
   //   id: 2,
   //   name: 'yellow',
-  //   color: '#e7dd00'
+  //   color: 0xe7dd00
   // },
-  // {
-  //   id: 3,
-  //   name: 'green',
-  //   color: '#89ed90'
-  // },
-  // {
-  //   id: 4,
-  //   name: 'blue',
-  //   color: 0x8abdff
-  // },
+  {
+    id: 3,
+    name: 'green',
+    color: 0x89ed90
+  },
+  {
+    id: 4,
+    name: 'blue',
+    color: 0x8abdff
+  },
   {
     id: 5,
     name: 'purple',
