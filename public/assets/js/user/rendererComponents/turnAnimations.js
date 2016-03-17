@@ -159,7 +159,7 @@ export function shiftDown(renderer) {
         if (!element.tween) {
           element.tween = tweens.getNewTween(element, {
             prevY: element.currentY
-          }, tweenLength, tweens.easeOutBounce,
+          }, tweenLength, tweens.easeInOutQuad,
           (args) => {
             args[0].shiftCompleted = false;
           });
@@ -185,7 +185,7 @@ export function populateNew(renderer) {
   let totalNewEls = renderer.newEls.children.length;
   for (let i = 0; i < totalNewEls; i++) {
     renderer.newEls.children[i].spawnFrameDelay = Math.floor(
-      Math.random() * totalNewEls);
+      Math.random() * totalNewEls / 5);
   }
 
   let tweenLength = 800; // in ms
