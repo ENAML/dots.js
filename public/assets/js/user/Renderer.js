@@ -4,7 +4,6 @@ import * as tweens from "./utils/tweens";
 
 class Renderer {
   constructor(options) {
-    console.log('this')
     this.renderer = options.renderer;
     this.stage = new PIXI.Container();
 
@@ -196,9 +195,10 @@ class Renderer {
 
 
     this.usePrevPosForShiftingEls = true;
+    this.canShowNew = false;
 
     // this.turnAnimationSteps.push(turnAnimations.waitForFrames(this, 50));
-    this.turnAnimationSteps.push(turnAnimations.hideActiveElConnection(this));
+    // this.turnAnimationSteps.push(turnAnimations.hideActiveElConnection(this));
     this.turnAnimationSteps.push(turnAnimations.shrinkActive(this));
     this.turnAnimationSteps.push(turnAnimations.shiftDown(this));
     this.turnAnimationSteps.push(turnAnimations.populateNew(this));
