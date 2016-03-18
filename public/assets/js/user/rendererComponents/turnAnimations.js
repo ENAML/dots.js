@@ -21,7 +21,7 @@ export function waitForFrames(renderer, frames) {
 
 // hides activeElConnections lines
 export function hideActiveElConnection(renderer) {
-  let tweenLength = 200; // in ms
+  let tweenLength = 100; // in ms
 
   let state = {
     hideCompleted: true
@@ -131,7 +131,7 @@ export function shiftDown(renderer) {
     }
   }
 
-  let tweenLength = 1000; // in ms
+  let tweenLength = 500; // in ms
 
   let state = {
     shiftCompleted: true
@@ -185,10 +185,10 @@ export function populateNew(renderer) {
   let totalNewEls = renderer.newEls.children.length;
   for (let i = 0; i < totalNewEls; i++) {
     renderer.newEls.children[i].spawnFrameDelay = Math.floor(
-      Math.random() * totalNewEls / 5);
+      Math.random() * totalNewEls / 3);
   }
 
-  let tweenLength = 800; // in ms
+  let tweenLength = 500; // in ms
 
   let state = {
     populationComplete: true

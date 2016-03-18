@@ -15,6 +15,7 @@ class Renderer {
 
     this.prepareStaticData(options.board);
     this.resetRendererState();
+
   }
 
   resetRendererState() {
@@ -198,7 +199,7 @@ class Renderer {
     this.canShowNew = false;
 
     // this.turnAnimationSteps.push(turnAnimations.waitForFrames(this, 50));
-    // this.turnAnimationSteps.push(turnAnimations.hideActiveElConnection(this));
+    this.turnAnimationSteps.push(turnAnimations.hideActiveElConnection(this));
     this.turnAnimationSteps.push(turnAnimations.shrinkActive(this));
     this.turnAnimationSteps.push(turnAnimations.shiftDown(this));
     this.turnAnimationSteps.push(turnAnimations.populateNew(this));

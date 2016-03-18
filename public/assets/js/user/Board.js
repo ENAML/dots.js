@@ -7,8 +7,8 @@ import Dot from "./GameElements/Dot";
 class Board {
   constructor (options) {
     if (!options) options = {};
-    options.width = options.width || 64;
-    options.height = options.height || 32;
+    options.width = options.width || 16;
+    options.height = options.height || 8;
 
     this.grid = new Grid({
       width: options.width,

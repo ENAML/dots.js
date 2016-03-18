@@ -29,9 +29,10 @@ class GameView {
 
     this.bindEvents();
 
-    this.update = this.update.bind(this);
-    this.update();
-
+    this.ticker = new PIXI.ticker.Ticker();
+    this.ticker.add(this.update, this);
+    this.ticker.speed = 0.5;
+    this.ticker.start();
   }
 
   bindEvents() {
@@ -228,9 +229,8 @@ class GameView {
    * Main Update Loop
    */
   update() {
-    requestAnimationFrame(this.update);
 
-    if (!this.board.hasChanged) {
+    if (window.debug && !this.board.hasChanged) {
       animationTest(this.board);
     }
 
