@@ -1,4 +1,3 @@
-import layoutManager from "./layoutManager";
 import Vector from "./Vector";
 import Grid from "./Grid";
 import Dot from "./GameElements/Dot";
@@ -15,10 +14,6 @@ class Board {
       height: options.height
     })
 
-    // calculate element dimensions
-    this.elWidth = layoutManager.width / this.grid.width;
-    this.elHeight = layoutManager.height / this.grid.height;
-    this.maxElSize = Math.min(this.elWidth, this.elHeight) / 2;
 
     // populate grid's elements array
     for (let i = 0; i < this.grid.height; i++) {

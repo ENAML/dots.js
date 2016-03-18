@@ -1,3 +1,4 @@
+import eventEmitter from "./utils/eventEmitter";
 import layoutManager from "./layoutManager";
 import mathUtils from "./utils/mathUtils";
 import Board from "./Board";
@@ -38,6 +39,8 @@ class GameView {
     document.addEventListener('mousedown', this.mouseDown.bind(this));
     document.addEventListener('mousemove', this.mouseMove.bind(this));
     document.addEventListener('mouseup', this.mouseUp.bind(this));
+
+    eventEmitter.on('layout:resize', this.resize, this);
   }
 
   /**
@@ -92,10 +95,10 @@ class GameView {
     for (let i = 0; i < this.board.grid.elements.length; i++) {
       let element = this.board.grid.elements[i];
       let elRect = {
-        x: element.gridPos.x * this.board.elWidth,
-        y: element.gridPos.y * this.board.elHeight,
-        width: this.board.elWidth,
-        height: this.board.elHeight
+        x: element.gridPos.x * this.renderController.elWidth,
+        y: element.gridPos.y * this.renderController.elHeight,
+        width: this.renderController.elWidth,
+        height: this.renderController.elHeight
       }
 
       if (mathUtils.pointInRect(x, y, elRect)) {
@@ -108,9 +111,9 @@ class GameView {
     let x = e.clientX;
     let y = e.clientY;
     let circle = {
-      x: element.gridPos.x * this.board.elWidth + this.board.elWidth / 2,
-      y: element.gridPos.y * this.board.elHeight + this.board.elHeight / 2,
-      radius: this.board.maxElSize / 2
+      x: element.gridPos.x * this.renderController.elWidth + this.renderController.elWidth / 2,
+      y: element.gridPos.y * this.renderController.elHeight + this.renderController.elHeight / 2,
+      radius: this.renderController.maxElSize / 2
     }
 
     return mathUtils.circlePointCollision(x, y, circle);
@@ -172,45 +175,45 @@ class GameView {
       secondMostRecentActiveEl.gridPos.subtract(mostRecentActiveEl.gridPos);
 
     let rectBetweenRecents = {
-      width: vectToSecondMostRecent.x * this.board.elWidth,
-      height: vectToSecondMostRecent.y * this.board.elHeight,
+      width: vectToSecondMostRecent.x * this.renderController.elWidth,
+      height: vectToSecondMostRecent.y * this.renderController.elHeight,
     };
 
     if (rectBetweenRecents.width !== 0) // horizontal collision rectangle
     {
       let shiftX;
       if (rectBetweenRecents.width > 0) {
-        rectBetweenRecents.width -= this.board.maxElSize;
-        shiftX = (this.board.maxElSize / 2);
+        rectBetweenRecents.width -= this.renderController.maxElSize;
+        shiftX = (this.renderController.maxElSize / 2);
       } else {
-        rectBetweenRecents.width += this.board.maxElSize;
-        shiftX = -(this.board.maxElSize / 2);
+        rectBetweenRecents.width += this.renderController.maxElSize;
+        shiftX = -(this.renderController.maxElSize / 2);
       }
 
-      rectBetweenRecents.height = this.board.maxElSize / 1.5;
+      rectBetweenRecents.height = this.renderController.maxElSize / 1.5;
 
-      rectBetweenRecents.y = (mostRecentActiveEl.gridPos.y * this.board.elHeight) +
-        (this.board.elHeight / 2) - (rectBetweenRecents.height / 2);
-      rectBetweenRecents.x = (mostRecentActiveEl.gridPos.x * this.board.elWidth) +
-        (this.board.elWidth / 2) + shiftX;
+      rectBetweenRecents.y = (mostRecentActiveEl.gridPos.y * this.renderController.elHeight) +
+        (this.renderController.elHeight / 2) - (rectBetweenRecents.height / 2);
+      rectBetweenRecents.x = (mostRecentActiveEl.gridPos.x * this.renderController.elWidth) +
+        (this.renderController.elWidth / 2) + shiftX;
 
     } else // vertical collision rectangle
     {
       let shiftY;
       if (rectBetweenRecents.height > 0) {
-        rectBetweenRecents.height -= this.board.maxElSize;
-        shiftY = (this.board.maxElSize / 2);
+        rectBetweenRecents.height -= this.renderController.maxElSize;
+        shiftY = (this.renderController.maxElSize / 2);
       } else {
-        rectBetweenRecents.height += this.board.maxElSize;
-        shiftY = -(this.board.maxElSize / 2);
+        rectBetweenRecents.height += this.renderController.maxElSize;
+        shiftY = -(this.renderController.maxElSize / 2);
       }
 
-      rectBetweenRecents.width = this.board.maxElSize / 1.5;
+      rectBetweenRecents.width = this.renderController.maxElSize / 1.5;
 
-      rectBetweenRecents.y = (mostRecentActiveEl.gridPos.y * this.board.elHeight) +
-        (this.board.elHeight / 2) + shiftY;
-      rectBetweenRecents.x = (mostRecentActiveEl.gridPos.x * this.board.elWidth) +
-        (this.board.elWidth / 2) - (rectBetweenRecents.width / 2);
+      rectBetweenRecents.y = (mostRecentActiveEl.gridPos.y * this.renderController.elHeight) +
+        (this.renderController.elHeight / 2) + shiftY;
+      rectBetweenRecents.x = (mostRecentActiveEl.gridPos.x * this.renderController.elWidth) +
+        (this.renderController.elWidth / 2) - (rectBetweenRecents.width / 2);
     }
 
     if (mathUtils.pointInRect(this.currentMousePos.clientX,
@@ -223,6 +226,16 @@ class GameView {
     // window.rectBetweenRecents = rectBetweenRecents;
   }
 
+  /**
+   * Resize method called by eventEmittered when
+   * layoutManager detects a window resize
+   */
+  resize(width, height) {
+    this.el.view.width = width;
+    this.el.view.height = height;
+    this.el.resize(width, height);
+    this.renderController.resize(width, height);
+  }
 
   /**
    * Main Update Loop

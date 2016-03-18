@@ -1,9 +1,20 @@
+import layoutManager from "./layoutManager";
 import Dot from "./rendererComponents/Dot";
 import * as turnAnimations from "./rendererComponents/turnAnimations";
 import * as tweens from "./utils/tweens";
 
 class Renderer {
   constructor(options) {
+
+    
+    this.gridWidth = options.board.grid.width;
+    this.gridHeight = options.board.grid.height;
+
+    // calculate element dimensions
+    this.elWidth = layoutManager.width / this.gridWidth;
+    this.elHeight = layoutManager.height / this.gridHeight;
+    this.maxElSize = Math.min(this.elWidth, this.elHeight) / 2;
+
     this.renderer = options.renderer;
     this.stage = new PIXI.Container();
 
@@ -55,6 +66,14 @@ class Renderer {
 
   }
 
+
+  resize(width, height) {
+    this.elWidth = width / this.gridWidth;
+    this.elHeight = height / this.gridHeight;
+    this.maxElSize = Math.min(this.elWidth, this.elHeight) / 2;
+  }
+
+
   /**
    * Prepares array of data required to render board in static state
    */
@@ -66,12 +85,12 @@ class Renderer {
         let element = board.grid.elements[i];
 
         let dot = new Dot({
-          currentX: element.gridPos.x * board.elWidth + board.elWidth / 2,
-          currentY: element.gridPos.y * board.elHeight + board.elHeight / 2,
+          currentX: element.gridPos.x * this.elWidth + this.elWidth / 2,
+          currentY: element.gridPos.y * this.elHeight + this.elHeight / 2,
           dotType: element.dotType,
-          radius: board.maxElSize / 2,
-          loopedRadius: board.maxElSize / 2,
-          maxLoopedRadius: board.maxElSize / 1.5,
+          radius: this.maxElSize / 2,
+          loopedRadius: this.maxElSize / 2,
+          maxLoopedRadius: this.maxElSize / 1.5,
           loopedAlpha: 0.5,
         });
         this.staticStateEls.addChild(dot);
@@ -125,12 +144,12 @@ class Renderer {
       let element = board.activeEls[i];
 
       let dot = new Dot({
-        currentX: element.gridPos.x * board.elWidth + board.elWidth / 2,
-        currentY: element.gridPos.y * board.elHeight + board.elHeight / 2,
+        currentX: element.gridPos.x * this.elWidth + this.elWidth / 2,
+        currentY: element.gridPos.y * this.elHeight + this.elHeight / 2,
         dotType: element.dotType,
-        radius: board.maxElSize / 2,
-        loopedRadius: board.loopCompleted ? board.maxElSize / 1.5 : board.maxElSize / 2,
-        maxLoopedRadius: board.maxElSize / 1.5,
+        radius: this.maxElSize / 2,
+        loopedRadius: board.loopCompleted ? this.maxElSize / 1.5 : this.maxElSize / 2,
+        maxLoopedRadius: this.maxElSize / 1.5,
         loopedAlpha: 0.5,
         loopCompleted: board.loopCompleted
       });
@@ -146,14 +165,14 @@ class Renderer {
         element.previousGridPos.y !== element.gridPos.y)) {
 
         let dot = new Dot({
-          currentX: element.gridPos.x * board.elWidth + board.elWidth / 2,
-          currentY: element.gridPos.y * board.elHeight + board.elHeight / 2,
-          prevX: element.previousGridPos.x * board.elWidth + board.elWidth / 2,
-          prevY: element.previousGridPos.y * board.elHeight + board.elHeight / 2,
+          currentX: element.gridPos.x * this.elWidth + this.elWidth / 2,
+          currentY: element.gridPos.y * this.elHeight + this.elHeight / 2,
+          prevX: element.previousGridPos.x * this.elWidth + this.elWidth / 2,
+          prevY: element.previousGridPos.y * this.elHeight + this.elHeight / 2,
           dotType: element.dotType,
-          radius: board.maxElSize / 2,
-          loopedRadius: board.maxElSize / 2,
-          maxLoopedRadius: board.maxElSize / 1.5,
+          radius: this.maxElSize / 2,
+          loopedRadius: this.maxElSize / 2,
+          maxLoopedRadius: this.maxElSize / 1.5,
           loopedAlpha: 0.5,
         });
         this.shiftingEls.addChild(dot);
@@ -163,15 +182,15 @@ class Renderer {
       else if (!element.previousGridPos) {
 
         let dot = new Dot({
-          currentX: element.gridPos.x * board.elWidth + board.elWidth / 2,
-          currentY: element.gridPos.y * board.elHeight + board.elHeight / 2,
-          prevX: element.gridPos.x * board.elWidth + board.elWidth / 2,
+          currentX: element.gridPos.x * this.elWidth + this.elWidth / 2,
+          currentY: element.gridPos.y * this.elHeight + this.elHeight / 2,
+          prevX: element.gridPos.x * this.elWidth + this.elWidth / 2,
           prevY: -100,
           dotType: element.dotType,
           radius: 0,
-          destRadius: board.maxElSize / 2,
+          destRadius: this.maxElSize / 2,
           loopedRadius: 0,
-          maxLoopedRadius: board.maxElSize / 1.5,
+          maxLoopedRadius: this.maxElSize / 1.5,
           loopedAlpha: 0.5,
         });
         this.newEls.addChild(dot);
@@ -182,12 +201,12 @@ class Renderer {
       else {
 
         let dot = new Dot({
-          currentX: element.gridPos.x * board.elWidth + board.elWidth / 2,
-          currentY: element.gridPos.y * board.elHeight + board.elHeight / 2,
+          currentX: element.gridPos.x * this.elWidth + this.elWidth / 2,
+          currentY: element.gridPos.y * this.elHeight + this.elHeight / 2,
           dotType: element.dotType,
-          radius: board.maxElSize / 2,
-          loopedRadius: board.maxElSize / 2,
-          maxLoopedRadius: board.maxElSize / 1.5,
+          radius: this.maxElSize / 2,
+          loopedRadius: this.maxElSize / 2,
+          maxLoopedRadius: this.maxElSize / 1.5,
           loopedAlpha: 0.5,
         });
         this.nonShiftingEls.addChild(dot);
@@ -328,28 +347,28 @@ class Renderer {
 
     if (board.activeEls.length < 1) return;
 
-    this.activeElConnections.lineStyle(board.maxElSize / 4, 0x333333);
+    this.activeElConnections.lineStyle(this.maxElSize / 4, 0x333333);
 
     if (board.activeEls.length > 1) {
       for (var i = 1; i < board.activeEls.length; i++) {
         let prevEl = board.activeEls[i - 1];
-        this.activeElConnections.moveTo(prevEl.gridPos.x * board.elWidth + board.elWidth / 2,
-          prevEl.gridPos.y * board.elHeight + board.elHeight / 2);
+        this.activeElConnections.moveTo(prevEl.gridPos.x * this.elWidth + this.elWidth / 2,
+          prevEl.gridPos.y * this.elHeight + this.elHeight / 2);
 
         let currentEl = board.activeEls[i];
-        this.activeElConnections.lineTo(currentEl.gridPos.x * board.elWidth + board.elWidth / 2,
-          currentEl.gridPos.y * board.elHeight + board.elHeight / 2);
+        this.activeElConnections.lineTo(currentEl.gridPos.x * this.elWidth + this.elWidth / 2,
+          currentEl.gridPos.y * this.elHeight + this.elHeight / 2);
       }
     }
 
     let lastEl = board.activeEls[board.activeEls.length - 1];
-    this.activeElConnections.moveTo(lastEl.gridPos.x * board.elWidth + board.elWidth / 2,
-      lastEl.gridPos.y * board.elHeight + board.elHeight / 2);
+    this.activeElConnections.moveTo(lastEl.gridPos.x * this.elWidth + this.elWidth / 2,
+      lastEl.gridPos.y * this.elHeight + this.elHeight / 2);
 
     if (board.loopCompleted) {
       let firstEl = board.activeEls[0];
-      this.activeElConnections.lineTo(firstEl.gridPos.x * board.elWidth + board.elWidth / 2,
-        firstEl.gridPos.y * board.elHeight + board.elHeight / 2);
+      this.activeElConnections.lineTo(firstEl.gridPos.x * this.elWidth + this.elWidth / 2,
+        firstEl.gridPos.y * this.elHeight + this.elHeight / 2);
     } else {
       this.activeElConnections.lineTo(currentMousePos.clientX, currentMousePos.clientY);
     }

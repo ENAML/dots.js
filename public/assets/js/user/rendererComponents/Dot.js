@@ -1,3 +1,6 @@
+import eventEmitter from "../utils/eventEmitter";
+
+
 class Dot extends PIXI.Container {
   constructor(options) {
     super();
@@ -116,8 +119,33 @@ class CircleSpriteGenerator {
 
     this.loopCircleTextures = {};
     this.circleTextures = {};
+
+    eventEmitter.on('layout:resize', this.flushCaches, this);
   }
 
+
+  /**
+   * Called by eventEmitter on resize. Since circle textures
+   * are based on window size, we need to clear them and create
+   * new ones whenever the window resizes.
+   */
+  flushCaches() {
+    let i;
+    for (i in this.loopCircleTextures) {
+      delete this.loopCircleTextures[i];
+    }
+    for (i in this.circleTextures) {
+      delete this.circleTextures[i];
+    }
+    // debugger;
+  }
+
+
+  /**
+   * Returns a new instance of Circle sprite class
+   * if the texture required for that color has already
+   * been generated, get it from cache. Otherwise, create new one.
+   */
   createNewCircle(currentRadius, baseRadius, color, alpha, isMain) {
     let texture;
 
