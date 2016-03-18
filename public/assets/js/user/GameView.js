@@ -2,6 +2,7 @@ import layoutManager from "./layoutManager";
 import mathUtils from "./utils/mathUtils";
 import Board from "./Board";
 import Renderer from "./Renderer";
+import ticker from "./utils/ticker";
 
 import animationTest from "./utils/animationTest";
 
@@ -29,10 +30,8 @@ class GameView {
 
     this.bindEvents();
 
-    this.ticker = new PIXI.ticker.Ticker();
-    this.ticker.add(this.update, this);
-    this.ticker.speed = 0.5;
-    this.ticker.start();
+    ticker.add(this.update, this);
+    ticker.start();
   }
 
   bindEvents() {
