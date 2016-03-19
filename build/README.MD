@@ -21,3 +21,4 @@
 - PIXI.js (and probably a lot of other libs) is annoying to get working
     + https://gist.github.com/oal/898df82fa64e54dd16d0
     + https://gist.github.com/mjackson/ecd3914ebee934f4daf4
+    + http://olav.it/snippet/webpack-pixi-js/

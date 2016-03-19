@@ -12,7 +12,7 @@ class Board {
     this.grid = new Grid({
       width: options.width,
       height: options.height
-    })
+    });
 
 
     // populate grid's elements array

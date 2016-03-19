@@ -62,6 +62,13 @@ module.exports = {
           }
         }
       },
+
+      // // for loading PIXI filters -- causes issues with caching though
+      // {
+      //   test: /\.js$/,
+      //   include: paths.resolve.nodeModulesPath + '/pixi.js',
+      //   loader: "transform?brfs"
+      // },
       {
         test: /\.scss$/,
         loader: ExtractTextPlugin.extract(
@@ -76,6 +83,9 @@ module.exports = {
         // include: path.resolve(__dirname, 'node_modules/pixi.js'),
         loader: 'json'
       }
+    ],
+    postLoaders: [
+
     ],
   },
 

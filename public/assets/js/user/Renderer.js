@@ -289,7 +289,7 @@ class Renderer {
     }
   }
 
-  drawTurnAnimationBoard(board) {
+  drawTurnAnimationBoard() {
     let i;
     let element;
 

@@ -5,12 +5,15 @@ import Board from "./Board";
 import Renderer from "./Renderer";
 import ticker from "./utils/ticker";
 
+import colors from "./config/colors";
+let colorScheme = colors.colorScheme;
+
 import animationTest from "./utils/animationTest";
 
 class GameView {
   constructor(options) {
     this.el = PIXI.autoDetectRenderer(layoutManager.width,
-      layoutManager.height, {backgroundColor : 0xEEEEEE, antialias: true});
+      layoutManager.height, {backgroundColor : colorScheme.dark.bg, antialias: true});
 
     options.container.append(this.el.view);
 
@@ -80,7 +83,7 @@ class GameView {
 
   }
 
-  mouseUp(e) {
+  mouseUp() {
     if (this.board.hasChanged) return;
 
     this.board.turn();
@@ -160,7 +163,7 @@ class GameView {
    * - do a hit / collision test to check if cursor is in this rectangle
    * and if so remove / [].pop() the most recent activeEl
    */
-  handleMouseOutEl(hoverEl) {
+  handleMouseOutEl( /*hoverEl */ ) {
 
     // only try to move back if array length is 2 or more
     if (this.board.activeEls.length < 2) return;

@@ -1,31 +1,35 @@
 import mathUtils from "../utils/mathUtils";
 import Vector from "../Vector";
 
+import colors from "../config/colors";
+let colorScheme = colors.colorScheme;
+// debugger;
+
 const DOTTYPES = [
   {
     id: 1,
     name: 'red',
-    color: 0xf15c3b
+    color: colorScheme[window.colorScheme].red,
   },
   // {
   //   id: 2,
   //   name: 'yellow',
-  //   color: 0xe7dd00
+  //   color: colorScheme[window.colorScheme].yellow
   // },
-  {
-    id: 3,
-    name: 'green',
-    color: 0x89ed90
-  },
+  // {
+  //   id: 3,
+  //   name: 'green',
+  //   color: colorScheme[window.colorScheme].green
+  // },
   {
     id: 4,
     name: 'blue',
-    color: 0x8abdff
+    color: colorScheme[window.colorScheme].blue
   },
   {
     id: 5,
     name: 'purple',
-    color: 0x9d5ab7
+    color: colorScheme[window.colorScheme].purple
   }
 ];
 

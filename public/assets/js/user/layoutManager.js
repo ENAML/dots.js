@@ -14,7 +14,7 @@ class LayoutManager {
   }
 
   bindEvents() {
-    window.addEventListener('resize', (e) => {
+    window.addEventListener('resize', () => {
       this.width = window.innerWidth;
       this.height = window.innerHeight;
 
