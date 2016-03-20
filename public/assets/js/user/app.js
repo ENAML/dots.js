@@ -16,16 +16,16 @@ if ( !location.origin ) {
 window.Common = window.Common || {};
 
 // set debug status
-window.debug = true;
+window.debug = false;
 
 $( window ).resize();
 
 class MyApp {
   constructor() {
-    this.$el = $('#content');
+    this.el = document.querySelector('#content');
 
     this.gameView = new GameView({
-      container: this.$el,
+      container: this.el,
     });
 
     this.start();
@@ -41,14 +41,14 @@ class MyApp {
 
 //kickoff app
 if (inIframe()) {
-  $(window).load(() => {
+  window.addEventListener('load', () => {
     console.log('starting app (in iframe)');
     setTimeout(() => {
       start();
     }, 1000);
   });
 } else {
-  $(window).load(() => {
+  window.addEventListener('load', () => {
     console.log('starting app');
     start();
   });

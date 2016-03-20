@@ -3,6 +3,9 @@ import Dot from "./rendererComponents/Dot";
 import * as turnAnimations from "./rendererComponents/turnAnimations";
 import * as tweens from "./utils/tweens";
 
+import colors from "./config/colors";
+let colorScheme = colors.colorScheme;
+
 class Renderer {
   constructor(options) {
 
@@ -254,37 +257,36 @@ class Renderer {
       for (let i = 0; i < this.staticStateEls.children.length; i++) {
         let element = this.staticStateEls.children[i];
 
-        if (element) {
+        if (!element) continue;
 
+        // increases / decreases size of loopedRadius
+        if (board.loopCompleted &&
+          board.activeEls[0].dotType === element.dotType &&
+          element.loopedRadius < element.maxLoopedRadius &&
+          !element.tween) {
 
-          // increases / decreases size of loopedRadius
-          if (board.loopCompleted &&
-            board.activeEls[0].dotType === element.dotType &&
-            element.loopedRadius < element.maxLoopedRadius &&
-            !element.tween) {
+          element.tween = tweens.getNewTween(element, {
+            loopedRadius: element.maxLoopedRadius
+          }, 300, tweens.easeInOutQuad, null,
+          () => {
+            element.tween = null;
+          });
 
-            element.tween = tweens.getNewTween(element, {
-              loopedRadius: element.maxLoopedRadius
-            }, 300, tweens.easeInOutQuad, null,
-            () => {
-              element.tween = null;
-            });
+        } else if (!board.loopCompleted &&
+          element.loopedRadius > element.radius &&
+          !element.tween) {
 
-          } else if (!board.loopCompleted &&
-            element.loopedRadius > element.radius &&
-            !element.tween) {
+          element.tween = tweens.getNewTween(element, {
+            loopedRadius: element.radius
+          }, 300, tweens.easeInOutQuad, null,
+          () => {
+            element.tween = null;
+          });
 
-            element.tween = tweens.getNewTween(element, {
-              loopedRadius: element.radius
-            }, 300, tweens.easeInOutQuad, null,
-            () => {
-              element.tween = null;
-            });
-
-          }
-          if (element.tween) element.tween();
-          element.update(false);
         }
+        
+        if (element.tween) element.tween();
+        element.update(false);
       }
     }
   }
@@ -347,7 +349,8 @@ class Renderer {
 
     if (board.activeEls.length < 1) return;
 
-    this.activeElConnections.lineStyle(this.maxElSize / 4, 0x333333);
+    this.activeElConnections.lineStyle(this.maxElSize / 4,
+      colorScheme[window.colorScheme].activeElConnections);
 
     if (board.activeEls.length > 1) {
       for (var i = 1; i < board.activeEls.length; i++) {

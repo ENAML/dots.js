@@ -18,6 +18,7 @@ class Dot extends PIXI.Container {
     this.loopCompleted = options.loopCompleted;
 
     this.createChildren();
+
     this.update(false);
   }
 

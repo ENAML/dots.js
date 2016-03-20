@@ -15,7 +15,7 @@ class GameView {
     this.el = PIXI.autoDetectRenderer(layoutManager.width,
       layoutManager.height, {backgroundColor : colorScheme.dark.bg, antialias: true});
 
-    options.container.append(this.el.view);
+    options.container.appendChild(this.el.view);
 
     this.mousePressed = false;
     this.currentMousePos = {

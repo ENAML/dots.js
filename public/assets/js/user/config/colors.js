@@ -4,6 +4,7 @@ module.exports = {
   colorScheme: {
     light: {
       bg: 0xEEEEEE,
+      activeElConnections: 0x333333,
       red: 0xf15c3b,
       yellow: 0xe7dd00,
       green: 0x89ed90,
@@ -12,6 +13,7 @@ module.exports = {
     },
     dark: {
       bg: 0x222222,
+      activeElConnections: 0xDDDDDD,
       red: 0xff2849,
       yellow: 0xdff800,
       green: 0x00f775,
