@@ -95,6 +95,7 @@ class Renderer {
           loopedRadius: this.maxElSize / 2,
           maxLoopedRadius: this.maxElSize / 1.5,
           loopedAlpha: 0.5,
+          model: element,
         });
         this.staticStateEls.addChild(dot);
       }
@@ -154,7 +155,8 @@ class Renderer {
         loopedRadius: board.loopCompleted ? this.maxElSize / 1.5 : this.maxElSize / 2,
         maxLoopedRadius: this.maxElSize / 1.5,
         loopedAlpha: 0.5,
-        loopCompleted: board.loopCompleted
+        loopCompleted: board.loopCompleted,
+        model: element,
       });
       this.activeEls.addChild(dot);
     }
@@ -177,6 +179,7 @@ class Renderer {
           loopedRadius: this.maxElSize / 2,
           maxLoopedRadius: this.maxElSize / 1.5,
           loopedAlpha: 0.5,
+          model: element,
         });
         this.shiftingEls.addChild(dot);
       }
@@ -195,6 +198,7 @@ class Renderer {
           loopedRadius: 0,
           maxLoopedRadius: this.maxElSize / 1.5,
           loopedAlpha: 0.5,
+          model: element,
         });
         this.newEls.addChild(dot);
 
@@ -211,6 +215,7 @@ class Renderer {
           loopedRadius: this.maxElSize / 2,
           maxLoopedRadius: this.maxElSize / 1.5,
           loopedAlpha: 0.5,
+          model: element,
         });
         this.nonShiftingEls.addChild(dot);
       }
@@ -272,6 +277,19 @@ class Renderer {
             element.tween = null;
           });
 
+        } else if (element.model.newlyActive) {
+          element.model.newlyActive = false;
+
+          element.tween = tweens.getNewTween(element, {
+            loopedRadius: element.radius * 2,
+            loopedAlpha: 0,
+          }, 500, tweens.easeInOutQuad, null,
+          () => {
+            element.tween = null;
+            element.loopedRadius = element.radius;
+            element.loopedAlpha = 0.5;
+          });
+
         } else if (!board.loopCompleted &&
           element.loopedRadius > element.radius &&
           !element.tween) {
@@ -284,7 +302,7 @@ class Renderer {
           });
 
         }
-        
+
         if (element.tween) element.tween();
         element.update(false);
       }

@@ -17,6 +17,8 @@ class Dot extends PIXI.Container {
     this.loopedAlpha = options.loopedAlpha;
     this.loopCompleted = options.loopCompleted;
 
+    this.model = options.model; // reference to gameElement Dot
+
     this.createChildren();
 
     this.update(false);

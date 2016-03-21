@@ -20,7 +20,8 @@ export function getNewTween(obj, props, duration, easingFn, onProgress, onComple
 
   let currentTime;
 
-  return function() {
+  return function(...args) {
+
     currentTime = new Date() - startTime;
 
     if (currentTime < duration) {
@@ -31,7 +32,7 @@ export function getNewTween(obj, props, duration, easingFn, onProgress, onComple
 
       // pass in arguments in case you need to reference
       // something when calling returned function in callback
-      if (onProgress) onProgress(arguments);
+      if (onProgress) onProgress(args);
 
     } else {
 
@@ -42,7 +43,7 @@ export function getNewTween(obj, props, duration, easingFn, onProgress, onComple
 
       // pass in arguments in case you need to reference
       // something when calling returned function in callback
-      if (onComplete) onComplete(arguments);
+      if (onComplete) onComplete(args);
     }
   }
 }

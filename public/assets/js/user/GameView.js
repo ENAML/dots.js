@@ -56,7 +56,9 @@ class GameView {
     if (!hoverEl) return;
     if (!this.mouseInEl(e, hoverEl)) return;
 
+    hoverEl.newlyActive = true;
     this.board.activeEls.push(hoverEl);
+
     this.mousePressed = true;
 
     this.currentMousePos = e;
@@ -132,6 +134,7 @@ class GameView {
       this.board.activeEls.indexOf(hoverEl) === -1 &&
       neighbors.indexOf(hoverEl) !== -1) {
 
+      hoverEl.newlyActive = true;
       this.board.activeEls.push(hoverEl);
     }
 

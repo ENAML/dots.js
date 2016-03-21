@@ -26,17 +26,19 @@ const DOTTYPES = [
     name: 'blue',
     color: colorScheme[window.colorScheme].blue
   },
-  {
-    id: 5,
-    name: 'purple',
-    color: colorScheme[window.colorScheme].purple
-  }
+  // {
+  //   id: 5,
+  //   name: 'purple',
+  //   color: colorScheme[window.colorScheme].purple
+  // }
 ];
 
 class Dot {
   constructor(options) {
     this.gridPos = new Vector(options.x, options.y);
     this.dotType = DOTTYPES[mathUtils.randomInt(0, DOTTYPES.length - 1)];
+
+    this.newlyActive = false;
   }
 }
 

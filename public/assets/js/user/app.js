@@ -18,8 +18,6 @@ window.Common = window.Common || {};
 // set debug status
 window.debug = false;
 
-$( window ).resize();
-
 class MyApp {
   constructor() {
     this.el = document.querySelector('#content');
