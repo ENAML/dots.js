@@ -1,10 +1,9 @@
 import layoutManager from "./layoutManager";
 import Dot from "./rendererComponents/Dot";
+import ActiveElConnections from "./rendererComponents/ActiveElConnections";
 import * as turnAnimations from "./rendererComponents/turnAnimations";
 import * as tweens from "./utils/tweens";
 
-import colors from "./config/colors";
-let colorScheme = colors.colorScheme;
 
 class Renderer {
   constructor(options) {
@@ -21,7 +20,7 @@ class Renderer {
     this.renderer = options.renderer;
     this.stage = new PIXI.Container();
 
-    this.activeElConnections = new PIXI.Graphics();
+    this.activeElConnections = new ActiveElConnections();
     this.stage.addChild(this.activeElConnections);
 
     this.staticStateEls = new PIXI.Container(); // this is used when turn animations aren't happening
@@ -129,7 +128,7 @@ class Renderer {
         element.destroy(true);
       }
 
-      this.activeElConnections.clear();
+      this.activeElConnections.clearChildren();
       this.activeElConnections.alpha = 1;
     }
 
@@ -257,7 +256,7 @@ class Renderer {
 
     } else {
 
-      this.drawActiveElConnections(board, currentMousePos);
+      this.activeElConnections.drawConnections(this, board, currentMousePos);
 
       for (let i = 0; i < this.staticStateEls.children.length; i++) {
         let element = this.staticStateEls.children[i];
@@ -358,41 +357,6 @@ class Renderer {
     this.context.beginPath();
     this.context.arc(x, y, element.radius, 0, Math.PI * 2, false);
     this.context.fill();
-  }
-
-
-
-  drawActiveElConnections(board, currentMousePos) {
-    this.activeElConnections.clear();
-
-    if (board.activeEls.length < 1) return;
-
-    this.activeElConnections.lineStyle(this.maxElSize / 4,
-      colorScheme[window.colorScheme].activeElConnections);
-
-    if (board.activeEls.length > 1) {
-      for (var i = 1; i < board.activeEls.length; i++) {
-        let prevEl = board.activeEls[i - 1];
-        this.activeElConnections.moveTo(prevEl.gridPos.x * this.elWidth + this.elWidth / 2,
-          prevEl.gridPos.y * this.elHeight + this.elHeight / 2);
-
-        let currentEl = board.activeEls[i];
-        this.activeElConnections.lineTo(currentEl.gridPos.x * this.elWidth + this.elWidth / 2,
-          currentEl.gridPos.y * this.elHeight + this.elHeight / 2);
-      }
-    }
-
-    let lastEl = board.activeEls[board.activeEls.length - 1];
-    this.activeElConnections.moveTo(lastEl.gridPos.x * this.elWidth + this.elWidth / 2,
-      lastEl.gridPos.y * this.elHeight + this.elHeight / 2);
-
-    if (board.loopCompleted) {
-      let firstEl = board.activeEls[0];
-      this.activeElConnections.lineTo(firstEl.gridPos.x * this.elWidth + this.elWidth / 2,
-        firstEl.gridPos.y * this.elHeight + this.elHeight / 2);
-    } else {
-      this.activeElConnections.lineTo(currentMousePos.clientX, currentMousePos.clientY);
-    }
   }
 
 }
